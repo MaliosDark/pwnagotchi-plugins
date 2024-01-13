@@ -11,7 +11,7 @@ from pwnagotchi.plugins import Plugin
 
 class HoneyPotPlugin(Plugin):
     __author__ = 'Tu Nombre'
-    __version__ = '1.2.5'
+    __version__ = '1.2.6'
     __license__ = 'GPL3'
     __description__ = 'A Pwnagotchi plugin for setting up a honey pot to detect other Pwnagotchis.'
 
@@ -23,15 +23,6 @@ class HoneyPotPlugin(Plugin):
         self.num_initial_aps = 5
         self.update_interval = 60
         self.log_path = "/etc/pwnagotchi/hplogs.log"
-
-        if 'ui.plugins.honey-pot-plugin' in self.config:
-            self.num_initial_aps = self.config['ui.plugins.honey-pot-plugin'].get('num_initial_aps', 5)
-            self.update_interval = self.config['ui.plugins.honey-pot-plugin'].get('update_interval', 60)
-            self.log_path = self.config['ui.plugins.honey-pot-plugin'].get('log_path', "/etc/pwnagotchi/hplogs.log")
-
-        log_dir = os.path.dirname(self.log_path)
-        if not os.path.exists(log_dir):
-            os.makedirs(log_dir)
 
         threading.Timer(self.update_interval, self.render_honey_pots).start()
 

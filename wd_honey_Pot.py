@@ -10,7 +10,7 @@ from pwnagotchi.plugins import Plugin
 
 class HoneyPotPlugin(Plugin):
     __author__ = 'Andryu Schittone'
-    __version__ = '1.3.4'
+    __version__ = '1.3.5'
     __license__ = 'GPL3'
     __description__ = 'A Pwnagotchi plugin for setting up a honey pot to just detect other Pwnagotchis making deauths.'
 
@@ -80,12 +80,10 @@ class HoneyPotPlugin(Plugin):
             self.log(f"Created HoneyPot: {fake_essid} ({fake_ap['addr']})")
 
     def render_honey_pots(self):
-        self.ui.add_element('honey-pots', LabeledValue(color=fonts.BLACK, label='Honey Pots', value=str(len(self.honey_pot_aps)), position=(self.ui.width() / 2 - 25, 0),
-                                                        label_font=fonts.Bold, text_font=fonts.Medium))
-        self.ui.add_element('detected-fake-aps', LabeledValue(color=fonts.BLACK, label='Detected Fake APs', value=str(self.detected_fake_aps), position=(self.ui.width() / 2 - 25, 10),
-                                                                 label_font=fonts.Bold, text_font=fonts.Medium))
-        self.ui.add_element('active-fake-aps', LabeledValue(color=fonts.BLACK, label='Active Fake APs', value=str(self.active_fake_aps), position=(self.ui.width() / 2 - 25, 20),
-                                                               label_font=fonts.Bold, text_font=fonts.Medium))
+        self.ui.set('honey-pots', str(len(self.honey_pot_aps)))
+        self.ui.set('detected-fake-aps', str(self.detected_fake_aps))
+        self.ui.set('active-fake-aps', str(self.active_fake_aps))
+
 
         with open(self.log_path, 'a') as log_file:
             log_file.write(f"{time.strftime('%Y-%m-%d %H:%M:%S')} - Detected Fake APs: {self.detected_fake_aps}, Active Fake APs: {self.active_fake_aps}\n")

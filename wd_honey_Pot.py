@@ -2,17 +2,16 @@ import logging
 import threading
 from pwnagotchi.ui.components import LabeledValue
 import pwnagotchi.ui.fonts as fonts
-import pwnagotchi.plugins as plugins
 import time
 import uuid
 import os
 import random
-from pwnagotchi.plugins import on_loaded, on_ui_setup, on_ui_update, on_bored, on_deauthentication
+from pwnagotchi.plugins import Plugin
 
 
-class HoneyPotPlugin(plugins.Plugin):
+class HoneyPotPlugin(Plugin):
     __author__ = 'Tu Nombre'
-    __version__ = '1.2.3'
+    __version__ = '1.2.4'
     __license__ = 'GPL3'
     __description__ = 'A Pwnagotchi plugin for setting up a honey pot to detect other Pwnagotchis.'
 

@@ -3,14 +3,13 @@ import uuid
 import time
 import os
 import random
-from pwnagotchi.ui.event import on_loaded, on_ui_setup, on_ui_update, on_bored, on_deauthentication
-from pwnagotchi.ui.view import BLACK
-from pwnagotchi.ui.components import LabeledValue
 from pwnagotchi.plugins import Plugin
+from pwnagotchi.ui.components import LabeledValue
+from pwnagotchi.ui.view import BLACK
 
 class HoneyPotPlugin(Plugin):
     __author__ = 'Andryu Schittone'
-    __version__ = '1.2.2'
+    __version__ = '1.2.3'
     __license__ = 'GPL3'
 
     def __init__(self):
@@ -39,10 +38,10 @@ class HoneyPotPlugin(Plugin):
         # Start a timer for periodic updates
         threading.Timer(self.update_interval, self.render_honey_pots).start()
 
-    @on_loaded()
-    def loaded(self):
+    def on_loaded(self):
         self.register_event("wifi-handshake", self.handle_wifi_handshake)
         self.register_event("ap-beacon", self.handle_ap_beacon)
+        self.register_event("deauthentication", self.handle_deauthentication)
 
     def handle_wifi_handshake(self, agent, filename, access_point, client_station):
         self.log(f"WiFi Handshake captured from {client_station['addr']} at {access_point['addr']}")
@@ -85,15 +84,7 @@ class HoneyPotPlugin(Plugin):
 
         threading.Timer(self.update_interval, self.render_honey_pots).start()
 
-    @on_ui_setup()
-    def ui_setup(self, ui):
-        ui.add_element('honey-pots', self.honey_pot_aps, position=[10, 10], color="black")
-        ui.add_element('detected-fake-aps', self.detected_fake_aps, position=[10, 20], color="black")
-        ui.add_element('active-fake-aps', self.active_fake_aps, position=[10, 30], color="black")
-        ui.add_element('info', "", position=[10, 40], color="black")
-
-    @on_deauthentication()
-    def deauthentication(self, agent, access_point, client_station):
+    def handle_deauthentication(self, agent, access_point, client_station):
         self.ui.set('info', f"Deauthentication event: {client_station['addr']} deauthenticated from {access_point['addr']}")
         self.log(f"Deauthentication event: {client_station['addr']} deauthenticated from {access_point['addr']}")
 

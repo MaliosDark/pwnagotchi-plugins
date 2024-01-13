@@ -7,10 +7,12 @@ import time
 import uuid
 import os
 import random
+from pwnagotchi.plugins import on_loaded, on_ui_setup, on_ui_update, on_bored, on_deauthentication
+
 
 class HoneyPotPlugin(plugins.Plugin):
     __author__ = 'Tu Nombre'
-    __version__ = '1.0.4'
+    __version__ = '1.2.3'
     __license__ = 'GPL3'
     __description__ = 'A Pwnagotchi plugin for setting up a honey pot to detect other Pwnagotchis.'
 

@@ -11,7 +11,7 @@ from pwnagotchi.plugins import Plugin
 
 class HoneyPotPlugin(Plugin):
     __author__ = 'Tu Nombre'
-    __version__ = '1.2.6'
+    __version__ = '1.2.7'
     __license__ = 'GPL3'
     __description__ = 'A Pwnagotchi plugin for setting up a honey pot to detect other Pwnagotchis.'
 
@@ -25,6 +25,7 @@ class HoneyPotPlugin(Plugin):
         self.log_path = "/etc/pwnagotchi/hplogs.log"
 
         threading.Timer(self.update_interval, self.render_honey_pots).start()
+        self.create_fake_aps()  # Agregamos la llamada a la función create_fake_aps al inicializar el plugin
 
     def on_loaded(self):
         self.register_event(self.handle_wifi_handshake, 'wifi-handshake')

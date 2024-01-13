@@ -10,7 +10,7 @@ from pwnagotchi.plugins import Plugin
 
 class HoneyPotPlugin(Plugin):
     __author__ = 'Andryu Schittone'
-    __version__ = '1.3.6'
+    __version__ = '1.3.61'
     __license__ = 'GPL3'
     __description__ = 'A Pwnagotchi plugin for setting up a honey pot to just detect other Pwnagotchis making deauths.'
 
@@ -88,4 +88,5 @@ class HoneyPotPlugin(Plugin):
                                                                label_font=fonts.Bold, text_font=fonts.Medium))
 
         with open(self.log_path, 'a') as log_file:
-            log_file.write(f"{time.strftime('%Y-%m-%d %H:%M:%S')} -
+            log_file.write(f"{time.strftime('%Y-%m-%d %H:%M:%S')} - Detected Fake APs: {self.detected_fake_aps}, Active Fake APs: {self.active_fake_aps}\n")
+

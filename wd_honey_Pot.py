@@ -10,12 +10,13 @@ from pwnagotchi.plugins import Plugin
 
 class HoneyPotPlugin(Plugin):
     __author__ = 'Andryu Schittone'
-    __version__ = '1.3.2'
+    __version__ = '1.3.3'
     __license__ = 'GPL3'
     __description__ = 'A Pwnagotchi plugin for setting up a honey pot to just detect other Pwnagotchis making deauths.'
 
     def __init__(self):
         logging.debug("HoneyPot plugin created")
+        self.ui = None  # Agrega esta línea para inicializar self.ui
         self.honey_pot_aps = set()
         self.detected_fake_aps = 0
         self.active_fake_aps = 0

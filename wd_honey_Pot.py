@@ -8,12 +8,11 @@ import os
 import random
 from pwnagotchi.plugins import Plugin
 
-
 class HoneyPotPlugin(Plugin):
-    __author__ = 'Tu Nombre'
-    __version__ = '1.2.8'
+    __author__ = 'Andryu Schittone'
+    __version__ = '1.2.9'
     __license__ = 'GPL3'
-    __description__ = 'A Pwnagotchi plugin for setting up a honey pot to detect other Pwnagotchis.'
+    __description__ = 'A Pwnagotchi plugin for setting up a honey pot to just detect other Pwnagotchis making deauths.'
 
     def __init__(self):
         logging.debug("HoneyPot plugin created")
@@ -93,7 +92,7 @@ class HoneyPotPlugin(Plugin):
 
         threading.Timer(self.update_interval, self.render_honey_pots).start()
 
-    def log(self, message):  # Agregamos el método log
+    def log(self, message):
         logging.info(message)
 
 # Register the plugin

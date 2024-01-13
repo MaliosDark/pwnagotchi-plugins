@@ -10,7 +10,7 @@ from pwnagotchi.plugins import Plugin
 
 class HoneyPotPlugin(Plugin):
     __author__ = 'Andryu Schittone'
-    __version__ = '1.2.9'
+    __version__ = '1.3.0'
     __license__ = 'GPL3'
     __description__ = 'A Pwnagotchi plugin for setting up a honey pot to just detect other Pwnagotchis making deauths.'
 
@@ -94,6 +94,9 @@ class HoneyPotPlugin(Plugin):
 
     def log(self, message):
         logging.info(message)
+        status = self.ui.get('status')
+        if status:
+            status.value = message
 
 # Register the plugin
 def setup():

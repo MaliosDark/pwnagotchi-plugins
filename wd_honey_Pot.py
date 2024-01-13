@@ -11,7 +11,7 @@ from pwnagotchi.plugins import Plugin
 
 class HoneyPotPlugin(Plugin):
     __author__ = 'Tu Nombre'
-    __version__ = '1.2.4'
+    __version__ = '1.2.5'
     __license__ = 'GPL3'
     __description__ = 'A Pwnagotchi plugin for setting up a honey pot to detect other Pwnagotchis.'
 
@@ -36,8 +36,8 @@ class HoneyPotPlugin(Plugin):
         threading.Timer(self.update_interval, self.render_honey_pots).start()
 
     def on_loaded(self):
-        self.register_event("wifi-handshake", self.handle_wifi_handshake)
-        self.register_event("ap-beacon", self.handle_ap_beacon)
+        self.register_event(self.handle_wifi_handshake, 'wifi-handshake')
+        self.register_event(self.handle_ap_beacon, 'ap-beacon')
 
     def on_unload(self, ui):
         pass

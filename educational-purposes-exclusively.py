@@ -19,7 +19,8 @@ try:
     import reportlab
 except ImportError:
     print("La librería ReportLab no está instalada. Instalándola ahora...")
-    subprocess.run(["sudo", "pip", "install", "reportlab"])
+    subprocess.run(["/usr/bin/python", "-m", "pip", "install", "reportlab"])
+
 
 READY = 0
 STATUS = ''
@@ -28,7 +29,7 @@ CHANNEL = 0
 
 class EducationalPurposesOnly(plugins.Plugin):
     __author__ = '@nagy_craig , MaliosDark'
-    __version__ = '1.0.1'
+    __version__ = '1.0.2'
     __license__ = 'GPL3'
     __description__ = 'A plugin to automatically authenticate to known networks and perform internal network recon'
 

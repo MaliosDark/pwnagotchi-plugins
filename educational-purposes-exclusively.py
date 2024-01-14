@@ -14,13 +14,6 @@ import socket
 from reportlab.pdfgen import canvas
 import datetime
 
-# Verificar si reportlab está instalado
-try:
-    import reportlab
-except ImportError:
-    print("La librería ReportLab no está instalada. Instalándola ahora...")
-    subprocess.run(["/usr/bin/python", "-m", "pip", "install", "reportlab"])
-
 
 READY = 0
 STATUS = ''

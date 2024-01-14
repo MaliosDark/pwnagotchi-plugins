@@ -1,6 +1,7 @@
+# educational-purposes-exclusively.py
+
 from pwnagotchi.plugins import Plugin
 import logging
-import os
 import subprocess
 import requests
 import time
@@ -12,15 +13,9 @@ STATUS = ''
 NETWORK = ''
 CHANNEL = 0
 
-
-READY = 0
-STATUS = ''
-NETWORK = ''
-CHANNEL = 0
-
 class EducationalPurposesOnly(Plugin):
     __author__ = '@nagy_craig , MaliosDark'
-    __version__ = '1.0.4'
+    __version__ = '1.0.5'
     __license__ = 'GPL3'
     __description__ = 'A plugin to automatically authenticate to known networks and perform internal network recon'
 
@@ -59,8 +54,6 @@ class EducationalPurposesOnly(Plugin):
             ui.set('status', f'Connected to {NETWORK} on channel {CHANNEL}.')
             ui.set('status', 'Performing network reconnaissance...')
      
-
-
     def _connect_to_target_network(self, network_name, channel, interface='wlan0'):
         global READY
         global STATUS
@@ -121,9 +114,6 @@ class EducationalPurposesOnly(Plugin):
         NETWORK = network_name
         logging.info(f'sending command to Bettercap to stop using mon0 on {interface}...')
 
-
-
-        
     def _restart_monitor_mode(self):
         logging.info('resuming wifi recon and monitor mode...')
         logging.info('stopping wpa_supplicant...')
@@ -143,43 +133,38 @@ class EducationalPurposesOnly(Plugin):
 
     def on_epoch(self, ui):
         # If not connected to a wireless network and mon0 doesn't exist, run _restart_monitor_mode function
-        if "Not-Associated" in subprocess.Popen('iwconfig wlan0').read() and "Monitor" not in subprocess.Popen('iwconfig mon0').read():
+        if "Not-Associated" in subprocess.run('iwconfig wlan0', shell=True, capture_output=True, text=True).stdout and "Monitor" not in subprocess.run('iwconfig mon0', shell=True, capture_output=True, text=True).stdout:
             self._restart_monitor_mode()
 
     def on_wifi_update(self, agent, access_points):
         global READY
         global STATUS
         home_network = self.options['home-network']
-        if READY == 1 and "Not-Associated" in os.popen('iwconfig wlan0').read():
+        if READY == 1 and "Not-Associated" in subprocess.run('iwconfig wlan0', shell=True, capture_output=True, text=True).stdout:
             for network in access_points:
                 if network['hostname'] == home_network:
                     signal_strength = network['rssi']
                     channel = network['channel']
-                    logging.info("FOUND home network nearby on channel %d (rssi: %d)" % (channel, signal_strength))
+                    logging.info(f"FOUND home network nearby on channel {channel} (rssi: {signal_strength})")
                     if signal_strength >= self.options['minimum-signal-strength']:
                         logging.info("Starting association...")
                         READY = 0
                         self._connect_to_target_network(network['hostname'], channel)
                     else:
-                        logging.info("The signal strength is too low (%d) to connect." % (signal_strength))
+                        logging.info(f"The signal strength is too low ({signal_strength}) to connect.")
                         STATUS = 'rssi_low'
-
-    # Función para realizar la autenticación con varias redes
-    def __init__(self, *args, **kwargs):
-        super(EducationalPurposesOnly, self).__init__(*args, **kwargs)
-        self.allowed_networks = ['Red1', 'Red2', 'Red3']
-
 
     def _port_scan(self, target_ip):
         open_ports = []
         for port in range(1, 1025):  # Rango común de puertos
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.settimeout(1)
-            result = sock.connect_ex((target_ip, port))
-            if result == 0:
+            command = f"timeout 1 bash -c 'echo >/dev/tcp/{target_ip}/{port}'"
+            try:
+                subprocess.run(command, shell=True, check=True)
                 open_ports.append(port)
-            sock.close()
+            except subprocess.CalledProcessError:
+                pass
         logging.info(f"Open ports on {target_ip}: {open_ports}")
+
 
     # Función para generar un informe en PDF
     def _generate_report(self, file_path, content):
@@ -188,17 +173,6 @@ class EducationalPurposesOnly(Plugin):
             pdf.drawString(72, 800, "Informe de Actividades")
             pdf.drawString(72, 780, content)
             pdf.save()
-
-
-    def on_ui_update(self, ui):
-        global STATUS
-        global NETWORK
-        global CHANNEL 
-        # ... (mantén o modifica según sea necesario)
-        if STATUS == 'associated':
-            ui.set('face', '(ᵔ◡◡ᵔ)')
-            ui.set('status', f'Connected to {NETWORK} on channel {CHANNEL}.')
-            ui.set('status_detail', 'Performing network reconnaissance...')
 
 
     # Notificaciones avanzadas

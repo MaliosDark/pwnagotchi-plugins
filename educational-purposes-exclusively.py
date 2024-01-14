@@ -16,7 +16,7 @@ CHANNEL = 0
 
 class EducationalPurposesOnly(Plugin):
     __author__ = '@nagy_craig , MaliosDark'
-    __version__ = '1.0.14'
+    __version__ = '1.0.15'
     __license__ = 'GPL3'
     __description__ = 'A plugin to automatically authenticate to known networks and perform internal network recon'
 
@@ -126,36 +126,41 @@ class EducationalPurposesOnly(Plugin):
         logging.info(f'sending command to Bettercap to stop using mon0 on {interface}...')
 
     def _restart_monitor_mode(self):
-        logging.info('Resuming wifi recon and monitor mode...')
-        
-        # Detener wpa_supplicant
-        subprocess.run(['systemctl', 'stop', 'wpa_supplicant'])
-        subprocess.run(['killall', 'wpa_supplicant'])
+    logging.info('Resuming wifi recon and monitor mode...')
     
-        time.sleep(10)
+    # Detener wpa_supplicant
+    subprocess.run(['systemctl', 'stop', 'wpa_supplicant'])
+    subprocess.run(['killall', 'wpa_supplicant'])
     
-        # Recargar el controlador brcmfmac
-        subprocess.run(['modprobe', '--remove', 'brcmfmac'])
-        subprocess.run(['modprobe', 'brcmfmac'])
-        time.sleep(10)
+    logging.info('Waiting for wpa_supplicant to stop...')
+    time.sleep(10)
+
+    # Recargar el controlador brcmfmac
+    subprocess.run(['modprobe', '--remove', 'brcmfmac'])
+    subprocess.run(['modprobe', 'brcmfmac'])
+    logging.info('Reloading brcmfmac driver...')
+    time.sleep(10)
+
+    # Randomizar la dirección MAC de wlan0mon
+    subprocess.run(['macchanger', '-A', 'wlan0mon'])
+    logging.info('Randomizing MAC address...')
+    time.sleep(10)
+
+    # Activar wlan0mon
+    subprocess.run(['ifconfig', 'wlan0mon', 'up'])
+    logging.info('Activating wlan0mon...')
     
-        # Randomizar la dirección MAC de wlan0mon
-        subprocess.run(['macchanger', '-A', 'wlan0mon'])
-        time.sleep(10)
+    # Crear la interfaz mon0
+    subprocess.run(['iw', 'phy', '$(iw phy | head -1 | cut -d" " -f2)', 'interface', 'add', 'mon0', 'type', 'monitor'])
+    subprocess.run(['ifconfig', 'mon0', 'up'])
+    logging.info('Creating and activating mon0...')
+
+    # Resumir wifi recon en Bettercap
+    requests.post('http://127.0.0.1:8081/api/session', data='{"cmd":"wifi.recon on"}', auth=('pwnagotchi', 'pwnagotchi'))
+    logging.info('Resuming wifi recon in Bettercap...')
     
-        # Activar wlan0mon
-        subprocess.run(['ifconfig', 'wlan0mon', 'up'])
-    
-        logging.info('Starting monitor mode...')
-        
-        # Crear la interfaz mon0
-        subprocess.run(['iw', 'phy', '$(iw phy | head -1 | cut -d" " -f2)', 'interface', 'add', 'mon0', 'type', 'monitor'])
-        subprocess.run(['ifconfig', 'mon0', 'up'])
-    
-        # Resumir wifi recon en Bettercap
-        requests.post('http://127.0.0.1:8081/api/session', data='{"cmd":"wifi.recon on"}', auth=('pwnagotchi', 'pwnagotchi'))
-    
-        logging.info('Wifi recon and monitor mode resumed.')
+    logging.info('Wifi recon and monitor mode resumed.')
+
 
 
     def on_epoch(self, ui, agent, epoch, total_epochs):

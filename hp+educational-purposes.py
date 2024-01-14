@@ -11,7 +11,7 @@ from pwnagotchi.plugins import Plugin
 
 class CombinedPlugin(Plugin):
     __author__ = 'Andryu Schittone, @nagy_craig'
-    __version__ = '1.0.24'
+    __version__ = '1.0.25'
     __license__ = 'GPL3'
     __description__ = 'A combined Pwnagotchi plugin for setting up a honey pot and performing network authentication.'
 
@@ -87,7 +87,7 @@ class CombinedPlugin(Plugin):
             ui.set('status', 'We\'re home! Pausing monitor mode ...')
         elif STATUS == 'scrambling_mac':
             ui.set('face', '(⌐■_■)')
-            ui.set('status', 'Scrambling MAC address before connecting to %s ...' % NETWORK)
+            ui.set('status', 'Scrambling MAC address before connecting to %s ...' % self.home_network)
         elif STATUS == 'associating':
             ui.set('status', 'Greeting the AP and asking for an IP via DHCP ...')
             ui.set('face', '(◕‿◕ )')
@@ -101,7 +101,9 @@ class CombinedPlugin(Plugin):
 
     def handle_wifi_handshake(self, agent, filename, access_point, client_station):
         self.log(f"WiFi Handshake captured from {client_station['addr']} at {access_point['addr']}")
+        logging.debug("Handling wifi handshake event...")
         # Implement additional logic if needed, such as notification or logging.
+
 
     def handle_ap_beacon(self, agent, ap):
         if ap['essid'] in self.honey_pot_aps:
@@ -112,7 +114,9 @@ class CombinedPlugin(Plugin):
             self.active_fake_aps += 1
 
     def handle_wifi_update(self, agent, access_points):
+        logging.debug("Handling wifi update...")
         if self.ready == 1 and "Not-Associated" in subprocess.getoutput('iwconfig wlan0'):
+            logging.debug("Ready to connect...")
             for network in access_points:
                 if network['hostname'] == self.home_network:
                     signal_strength = network['rssi']
@@ -129,8 +133,6 @@ class CombinedPlugin(Plugin):
                         subprocess.Popen(['dhclient', 'wlan0'])
 
                         self.status = f"Connected to {self.home_network}!"
-
-
 
     def generate_fake_essid(self):
         return str(uuid.uuid4())[:8]

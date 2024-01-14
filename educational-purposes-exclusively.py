@@ -1,18 +1,16 @@
-# Install dependencies: apt update; apt install nmap macchanger
-from pwnagotchi.ui.components import LabeledValue
-from pwnagotchi.ui.view import BLACK
-import pwnagotchi.ui.fonts as fonts
-import pwnagotchi.plugins as plugins
-import pwnagotchi
+from pwnagotchi.plugins import Plugin
 import logging
 import os
 import subprocess
 import requests
 import time
-from pwnagotchi.ai.reward import RewardFunction
-import socket
 from reportlab.pdfgen import canvas
 import datetime
+
+READY = 0
+STATUS = ''
+NETWORK = ''
+CHANNEL = 0
 
 
 READY = 0
@@ -20,9 +18,9 @@ STATUS = ''
 NETWORK = ''
 CHANNEL = 0
 
-class EducationalPurposesOnly(plugins.Plugin):
+class EducationalPurposesOnly(Plugin):
     __author__ = '@nagy_craig , MaliosDark'
-    __version__ = '1.0.3'
+    __version__ = '1.0.4'
     __license__ = 'GPL3'
     __description__ = 'A plugin to automatically authenticate to known networks and perform internal network recon'
 

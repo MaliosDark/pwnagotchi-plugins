@@ -32,6 +32,8 @@ Make sure to adjust the coordinates and settings according to your preferences a
 
 ##########################################################################
 
-main.plugins.educational-purposes-exclusively.home-network = "SSID-HOME"
-main.plugins.educational-purposes-exclusively.home-password = "password"
-main.plugins.educational-purposes-exclusively.enabled = true
+  main.plugins.educational-purposes-exclusively.home-network = "SSID-HOME" 
+
+  main.plugins.educational-purposes-exclusively.home-password = "password" 
+
+  main.plugins.educational-purposes-exclusively.enabled = true

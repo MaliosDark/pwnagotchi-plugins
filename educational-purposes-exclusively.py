@@ -16,7 +16,7 @@ CHANNEL = 0
 
 class EducationalPurposesOnly(Plugin):
     __author__ = '@nagy_craig , MaliosDark'
-    __version__ = '1.0.6'
+    __version__ = '1.0.7'
     __license__ = 'GPL3'
     __description__ = 'A plugin to automatically authenticate to known networks and perform internal network recon'
 
@@ -132,9 +132,15 @@ class EducationalPurposesOnly(Plugin):
         logging.info('telling Bettercap to resume wifi recon...')
         requests.post('http://127.0.0.1:8081/api/session', data='{"cmd":"wifi.recon on"}', auth=('pwnagotchi', 'pwnagotchi'))
 
-    def on_epoch(self, ui):
-        # If not connected to a wireless network and mon0 doesn't exist, run _restart_monitor_mode function
-        if "Not-Associated" in subprocess.Popen('iwconfig wlan0').read() and "Monitor" not in subprocess.Popen('iwconfig mon0').read():
+    def on_epoch(self, ui, agent, epoch, total_epochs):
+        global READY
+        global STATUS
+    
+        blinds = epoch['blind']
+    
+        # If there are blinds, perform reconnection
+        if blinds > 0:
+            logging.info(f"Detected {blinds} blinds. Reconnecting to wlan0...")
             self._restart_monitor_mode()
         
     def on_wifi_update(self, agent, access_points):

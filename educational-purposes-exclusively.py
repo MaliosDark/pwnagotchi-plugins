@@ -22,7 +22,7 @@ CHANNEL = 0
 
 class EducationalPurposesOnly(plugins.Plugin):
     __author__ = '@nagy_craig , MaliosDark'
-    __version__ = '1.0.2'
+    __version__ = '1.0.3'
     __license__ = 'GPL3'
     __description__ = 'A plugin to automatically authenticate to known networks and perform internal network recon'
 
@@ -58,6 +58,9 @@ class EducationalPurposesOnly(plugins.Plugin):
         if STATUS == 'associated':
             ui.set('face', '(ᵔ◡◡ᵔ)')
             ui.set('status', 'Home at last!')
+            ui.set('status', f'Connected to {NETWORK} on channel {CHANNEL}.')
+            ui.set('status', 'Performing network reconnaissance...')
+     
 
 
     def _connect_to_target_network(self, network_name, channel, interface='wlan0'):

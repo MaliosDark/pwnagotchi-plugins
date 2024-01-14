@@ -16,7 +16,7 @@ CHANNEL = 0
 
 class EducationalPurposesOnly(Plugin):
     __author__ = '@nagy_craig , MaliosDark'
-    __version__ = '1.0.9'
+    __version__ = '1.0.10'
     __license__ = 'GPL3'
     __description__ = 'A plugin to automatically authenticate to known networks and perform internal network recon'
 
@@ -31,29 +31,30 @@ class EducationalPurposesOnly(Plugin):
     
     def on_ui_update(self, ui):
         global STATUS
-        while STATUS == 'rssi_low':
+        if STATUS == 'rssi_low':
             ui.set('face', '(ﺏ__ﺏ)')
             ui.set('status', 'Signal strength of %s is currently too low to connect ...' % NETWORK)
-        while STATUS == 'home_detected':
+        elif STATUS == 'home_detected':
             ui.set('face', '(◕‿‿◕)')
             ui.set('face', '(ᵔ◡◡ᵔ)')
             ui.set('status', 'Found home network at %s ...' % NETWORK)
-        while STATUS == 'switching_mon_off':
+        elif STATUS == 'switching_mon_off':
             ui.set('face', '(◕‿‿◕)')
             ui.set('face', '(ᵔ◡◡ᵔ)')
             ui.set('status', 'We\'re home! Pausing monitor mode ...')
-        while STATUS == 'scrambling_mac':
+        elif STATUS == 'scrambling_mac':
             ui.set('face', '(⌐■_■)')
             ui.set('status', 'Scrambling MAC address before connecting to %s ...' % NETWORK)
-        while STATUS == 'associating':
+        elif STATUS == 'associating':
             ui.set('status', 'Greeting the AP and asking for an IP via DHCP ...')
             ui.set('face', '(◕‿◕ )')
             ui.set('face', '( ◕‿◕)')
-        if STATUS == 'associated':
+        elif STATUS == 'associated':
             ui.set('face', '(ᵔ◡◡ᵔ)')
             ui.set('status', 'Home at last!')
             ui.set('status', f'Connected to {NETWORK} on channel {CHANNEL}.')
             ui.set('status', 'Performing network reconnaissance...')
+
      
     def _connect_to_target_network(self, network_name, channel, interface='wlan0mon'):
         global READY

@@ -16,7 +16,7 @@ CHANNEL = 0
 
 class EducationalPurposesOnly(Plugin):
     __author__ = '@nagy_craig , MaliosDark'
-    __version__ = '1.0.7'
+    __version__ = '1.0.8'
     __license__ = 'GPL3'
     __description__ = 'A plugin to automatically authenticate to known networks and perform internal network recon'
 
@@ -55,7 +55,7 @@ class EducationalPurposesOnly(Plugin):
             ui.set('status', f'Connected to {NETWORK} on channel {CHANNEL}.')
             ui.set('status', 'Performing network reconnaissance...')
      
-    def _connect_to_target_network(self, network_name, channel, interface='wlan0'):
+    def _connect_to_target_network(self, network_name, channel, interface='wlan0mon'):
         global READY
         global STATUS
         global NETWORK
@@ -123,10 +123,10 @@ class EducationalPurposesOnly(Plugin):
         logging.info('reloading brcmfmac driver...')
         subprocess.Popen('modprobe --remove brcmfmac && modprobe brcmfmac', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
         time.sleep(10)
-        logging.info('randomizing MAC address of wlan0...')
-        subprocess.Popen('macchanger -A wlan0', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
+        logging.info('randomizing MAC address of wlan0monmon...')
+        subprocess.Popen('macchanger -A wlan0monmon', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
         time.sleep(10)
-        subprocess.Popen('ifconfig wlan0 up', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
+        subprocess.Popen('ifconfig wlan0monmon up', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
         logging.info('starting monitor mode...')
         subprocess.Popen('iw phy "$(iw phy | head -1 | cut -d" " -f2)" interface add mon0 type monitor && ifconfig mon0 up', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
         logging.info('telling Bettercap to resume wifi recon...')
@@ -140,14 +140,14 @@ class EducationalPurposesOnly(Plugin):
     
         # If there are blinds, perform reconnection
         if blinds > 0:
-            logging.info(f"Detected {blinds} blinds. Reconnecting to wlan0...")
+            logging.info(f"Detected {blinds} blinds. Reconnecting to wlan0monmon...")
             self._restart_monitor_mode()
         
     def on_wifi_update(self, agent, access_points):
         global READY
         global STATUS
         home_network = self.options['home-network']
-        if READY == 1 and "Not-Associated" in os.popen('iwconfig wlan0').read():
+        if READY == 1 and "Not-Associated" in os.popen('iwconfig wlan0monmon').read():
             for network in access_points:
                 if network['hostname'] == home_network:
                     signal_strength = network['rssi']

@@ -16,7 +16,7 @@ CHANNEL = 0
 
 class EducationalPurposesOnly(Plugin):
     __author__ = '@nagy_craig , MaliosDark'
-    __version__ = '1.0.15.1'
+    __version__ = '1.0.15.2'
     __license__ = 'GPL3'
     __description__ = 'A plugin to automatically authenticate to known networks and perform internal network recon'
 
@@ -62,6 +62,7 @@ class EducationalPurposesOnly(Plugin):
 
         # Única llamada para actualizar el estado
         ui.set('status', '\n'.join(status_messages))
+
 
 
      

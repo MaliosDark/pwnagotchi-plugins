@@ -1,22 +1,26 @@
-# educational-purposes-exclusively.py
-
-import os
-from pwnagotchi.plugins import Plugin
+# Educational-purposes-only performs automatic wifi authentication and internal network recon
+# Some code and inspiration taken from forrest's Pwnagotchi plugin "quick_rides_to_jail"
+# Install dependencies: apt update; apt install nmap macchanger
+from pwnagotchi.ui.components import LabeledValue
+from pwnagotchi.ui.view import BLACK
+import pwnagotchi.ui.fonts as fonts
+import pwnagotchi.plugins as plugins
+import pwnagotchi
 import logging
+import os
 import subprocess
 import requests
 import time
-from reportlab.pdfgen import canvas
-import datetime
+from pwnagotchi.ai.reward import RewardFunction
+
 
 READY = 0
 STATUS = ''
 NETWORK = ''
-CHANNEL = 0
 
-class EducationalPurposesOnly(Plugin):
-    __author__ = '@nagy_craig , MaliosDark'
-    __version__ = '1.0.6'
+class EducationalPurposesOnly(plugins.Plugin):
+    __author__ = '@nagy_craig'
+    __version__ = '1.0.0'
     __license__ = 'GPL3'
     __description__ = 'A plugin to automatically authenticate to known networks and perform internal network recon'
 
@@ -52,69 +56,59 @@ class EducationalPurposesOnly(Plugin):
         if STATUS == 'associated':
             ui.set('face', '(ᵔ◡◡ᵔ)')
             ui.set('status', 'Home at last!')
-            ui.set('status', f'Connected to {NETWORK} on channel {CHANNEL}.')
-            ui.set('status', 'Performing network reconnaissance...')
-     
-    def _connect_to_target_network(self, network_name, channel, interface='wlan0'):
+
+    def _connect_to_target_network(self, network_name, channel):
         global READY
         global STATUS
         global NETWORK
-        global CHANNEL
-
         NETWORK = network_name
-        logging.info(f'sending command to Bettercap to stop using mon0 on {interface}...')
+        logging.info('sending command to Bettercap to stop using mon0...')
         STATUS = 'switching_mon_off'
         requests.post('http://127.0.0.1:8081/api/session', data='{"cmd":"wifi.recon off"}', auth=('pwnagotchi', 'pwnagotchi'))
         logging.info('ensuring all wpa_supplicant processes are terminated...')
-        subprocess.Popen(f'systemctl stop wpa_supplicant; killall wpa_supplicant', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
+        subprocess.Popen('systemctl stop wpa_supplicant; killall wpa_supplicant', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
         time.sleep(10)
-        logging.info(f'disabling monitor mode on {interface}...')
-        subprocess.Popen(f'modprobe --remove brcmfmac; modprobe brcmfmac', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
+        logging.info('disabling monitor mode...')
+        subprocess.Popen('modprobe --remove brcmfmac; modprobe brcmfmac', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
         time.sleep(10)
         # Runs this driver reload command again because sometimes it gets stuck the first time:
-        subprocess.Popen(f'modprobe --remove brcmfmac; modprobe brcmfmac', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
+        subprocess.Popen('modprobe --remove brcmfmac; modprobe brcmfmac', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
         time.sleep(10)
-        logging.info(f'randomizing {interface} MAC address prior to connecting...')
+        logging.info('randomizing wlan0 MAC address prior to connecting...')
         STATUS = 'scrambling_mac'
-        subprocess.Popen(f'macchanger -A {interface}', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
+        subprocess.Popen('macchanger -A wlan0', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
         time.sleep(10)
-        logging.info(f'setting hostname to a ^work dictionary word prior to connecting (for added stealth since their DHCP server will see this name)...')
-        subprocess.Popen(f'hostnamectl set-hostname $(grep "^work" /usr/share/dict/words | grep -v "s$" | sort -u | shuf -n 1))', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
+        logging.info('setting hostname to a ^work dictionary word prior to connecting (for added stealth since their DHCP server will see this name)...')
+        subprocess.Popen('hostnamectl set-hostname $(grep "^work" /usr/share/dict/words | grep -v "s$" | sort -u | shuf -n 1))', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
         time.sleep(5)
-        logging.info(f'starting up {interface} again...')
-        subprocess.Popen(f'ifconfig {interface} up', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
+        logging.info('starting up wlan0 again...')
+        subprocess.Popen('ifconfig wlan0 up', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
         time.sleep(3)
         # This command runs multiple times because it sometimes doesn't work the first time:
-        subprocess.Popen(f'ifconfig {interface} up', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
+        subprocess.Popen('ifconfig wlan0 up', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
         time.sleep(10)
-        logging.info(f'setting {interface} channel to match the target...')
+        logging.info('setting wlan0 channel to match the target...')
         STATUS = 'associating'
-        subprocess.Popen(f'iwconfig {interface} channel {channel}', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
-        subprocess.Popen(f'ifconfig {interface} up', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
+        subprocess.Popen('iwconfig wlan0 channel %d' % channel, shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
+        subprocess.Popen('ifconfig wlan0 up', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
         time.sleep(10)
-        logging.info(f'writing to wpa_supplicant.conf file...')
+        logging.info('writing to wpa_supplicant.conf file...')
         with open('/tmp/wpa_supplicant.conf', 'w') as wpa_supplicant_conf:
-            wpa_supplicant_conf.write(f"ctrl_interface=DIR=/var/run/wpa_supplicant\nupdate_config=1\ncountry=GB\n\nnetwork={{\n\tssid=\"%s\"\n\tpsk=\"%s\"\n}}\n" % (network_name, self.options['home-password']))
-        logging.info(f'starting wpa_supplicant background process on {interface}...')
-        subprocess.Popen(f'ifconfig {interface} up', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
-        subprocess.Popen(f'wpa_supplicant -u -s -c /tmp/wpa_supplicant.conf -i {interface} &', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
+            wpa_supplicant_conf.write("ctrl_interface=DIR=/var/run/wpa_supplicant\nupdate_config=1\ncountry=GB\n\nnetwork={\n\tssid=\"%s\"\n\tpsk=\"%s\"\n}\n" % (network_name, self.options['home-password']))
+        logging.info('starting wpa_supplicant background process...')
+        subprocess.Popen('ifconfig wlan0 up', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
+        subprocess.Popen('wpa_supplicant -u -s -c /tmp/wpa_supplicant.conf -i wlan0 &', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
         time.sleep(10)
-        logging.info(f'connecting to wifi on {interface}...')
-        subprocess.Popen(f'ifconfig {interface} up', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
-        subprocess.Popen(f'wpa_cli -i {interface} reconfigure', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
+        logging.info('connecting to wifi...')
+        subprocess.Popen('ifconfig wlan0 up', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
+        subprocess.Popen('wpa_cli -i wlan0 reconfigure', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
         time.sleep(10)
-        logging.info(f'trying to get an IP address on the network via DHCP on {interface}...')
-        subprocess.Popen(f'dhclient {interface}', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
+        logging.info('trying to get an IP address on the network via DHCP...')
+        subprocess.Popen('dhclient wlan0', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
         time.sleep(10)
-
-        # Nueva mejora: Registrar la conexión exitosa
-        self._log_successful_connection(network_name)
         STATUS = 'associated'
         READY = 1
-        CHANNEL = channel  # Esta línea ya está presente al principio de la función
-        NETWORK = network_name
-        logging.info(f'sending command to Bettercap to stop using mon0 on {interface}...')
-
+        
     def _restart_monitor_mode(self):
         logging.info('resuming wifi recon and monitor mode...')
         logging.info('stopping wpa_supplicant...')
@@ -131,7 +125,7 @@ class EducationalPurposesOnly(Plugin):
         subprocess.Popen('iw phy "$(iw phy | head -1 | cut -d" " -f2)" interface add mon0 type monitor && ifconfig mon0 up', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
         logging.info('telling Bettercap to resume wifi recon...')
         requests.post('http://127.0.0.1:8081/api/session', data='{"cmd":"wifi.recon on"}', auth=('pwnagotchi', 'pwnagotchi'))
-
+        
     def on_epoch(self, ui):
         # If not connected to a wireless network and mon0 doesn't exist, run _restart_monitor_mode function
         if "Not-Associated" in subprocess.Popen('iwconfig wlan0').read() and "Monitor" not in subprocess.Popen('iwconfig mon0').read():
@@ -154,33 +148,3 @@ class EducationalPurposesOnly(Plugin):
                     else:
                         logging.info("The signal strength is too low (%d) to connect." % (signal_strength))
                         STATUS = 'rssi_low'
-
-    def _port_scan(self, target_ip):
-        open_ports = []
-        for port in range(1, 1025):  # Rango común de puertos
-            command = f"timeout 1 bash -c 'echo >/dev/tcp/{target_ip}/{port}'"
-            try:
-                subprocess.run(command, shell=True, check=True)
-                open_ports.append(port)
-            except subprocess.CalledProcessError:
-                pass
-        logging.info(f"Open ports on {target_ip}: {open_ports}")
-
-
-    # Función para generar un informe en PDF
-    def _generate_report(self, file_path, content):
-        with open(file_path, 'w') as pdf_file:
-            pdf = canvas.Canvas(pdf_file)
-            pdf.drawString(72, 800, "Informe de Actividades")
-            pdf.drawString(72, 780, content)
-            pdf.save()
-
-
-    # Notificaciones avanzadas
-    def _send_notification(self, message, urgency='normal'):
-        # Implementa notificaciones avanzadas aquí (por ejemplo, Pushbullet API).
-        logging.info(f"Sending {urgency} notification: {message}")
-
-    # Seguimiento de conexiones exitosas
-    def _log_successful_connection(self, target_ip):
-        logging.info(f"Successfully connected to {target_ip} at {datetime.datetime.now()}")

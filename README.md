@@ -28,3 +28,10 @@ main.plugins.age.str_y_coord = 32
 ```
 
 Make sure to adjust the coordinates and settings according to your preferences and requirements.
+
+
+##########################################################################
+
+main.plugins.educational-purposes-exclusively.home-network = "SSID-HOME"
+main.plugins.educational-purposes-exclusively.home-password = "password"
+main.plugins.educational-purposes-exclusively.enabled = true

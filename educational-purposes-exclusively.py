@@ -16,7 +16,7 @@ CHANNEL = 0
 
 class EducationalPurposesOnly(Plugin):
     __author__ = '@nagy_craig , MaliosDark'
-    __version__ = '1.0.8'
+    __version__ = '1.0.9'
     __license__ = 'GPL3'
     __description__ = 'A plugin to automatically authenticate to known networks and perform internal network recon'
 
@@ -123,14 +123,15 @@ class EducationalPurposesOnly(Plugin):
         logging.info('reloading brcmfmac driver...')
         subprocess.Popen('modprobe --remove brcmfmac && modprobe brcmfmac', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
         time.sleep(10)
-        logging.info('randomizing MAC address of wlan0monmon...')
-        subprocess.Popen('macchanger -A wlan0monmon', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
+        logging.info('randomizing MAC address of wlan0mon...')
+        subprocess.Popen('macchanger -A wlan0mon', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
         time.sleep(10)
-        subprocess.Popen('ifconfig wlan0monmon up', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
+        subprocess.Popen('ifconfig wlan0mon up', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
         logging.info('starting monitor mode...')
         subprocess.Popen('iw phy "$(iw phy | head -1 | cut -d" " -f2)" interface add mon0 type monitor && ifconfig mon0 up', shell=True, stdin=None, stdout=open("/dev/null", "w"), stderr=None, executable="/bin/bash")
         logging.info('telling Bettercap to resume wifi recon...')
         requests.post('http://127.0.0.1:8081/api/session', data='{"cmd":"wifi.recon on"}', auth=('pwnagotchi', 'pwnagotchi'))
+
 
     def on_epoch(self, ui, agent, epoch, total_epochs):
         global READY

@@ -1,5 +1,6 @@
 # educational-purposes-exclusively.py
 
+import os
 from pwnagotchi.plugins import Plugin
 import logging
 import subprocess
@@ -15,7 +16,7 @@ CHANNEL = 0
 
 class EducationalPurposesOnly(Plugin):
     __author__ = '@nagy_craig , MaliosDark'
-    __version__ = '1.0.5'
+    __version__ = '1.0.6'
     __license__ = 'GPL3'
     __description__ = 'A plugin to automatically authenticate to known networks and perform internal network recon'
 
@@ -133,25 +134,25 @@ class EducationalPurposesOnly(Plugin):
 
     def on_epoch(self, ui):
         # If not connected to a wireless network and mon0 doesn't exist, run _restart_monitor_mode function
-        if "Not-Associated" in subprocess.run('iwconfig wlan0', shell=True, capture_output=True, text=True).stdout and "Monitor" not in subprocess.run('iwconfig mon0', shell=True, capture_output=True, text=True).stdout:
+        if "Not-Associated" in subprocess.Popen('iwconfig wlan0').read() and "Monitor" not in subprocess.Popen('iwconfig mon0').read():
             self._restart_monitor_mode()
-
+        
     def on_wifi_update(self, agent, access_points):
         global READY
         global STATUS
         home_network = self.options['home-network']
-        if READY == 1 and "Not-Associated" in subprocess.run('iwconfig wlan0', shell=True, capture_output=True, text=True).stdout:
+        if READY == 1 and "Not-Associated" in os.popen('iwconfig wlan0').read():
             for network in access_points:
                 if network['hostname'] == home_network:
                     signal_strength = network['rssi']
                     channel = network['channel']
-                    logging.info(f"FOUND home network nearby on channel {channel} (rssi: {signal_strength})")
+                    logging.info("FOUND home network nearby on channel %d (rssi: %d)" % (channel, signal_strength))
                     if signal_strength >= self.options['minimum-signal-strength']:
                         logging.info("Starting association...")
                         READY = 0
                         self._connect_to_target_network(network['hostname'], channel)
                     else:
-                        logging.info(f"The signal strength is too low ({signal_strength}) to connect.")
+                        logging.info("The signal strength is too low (%d) to connect." % (signal_strength))
                         STATUS = 'rssi_low'
 
     def _port_scan(self, target_ip):

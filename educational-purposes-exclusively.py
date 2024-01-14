@@ -16,7 +16,7 @@ CHANNEL = 0
 
 class EducationalPurposesOnly(Plugin):
     __author__ = '@nagy_craig , MaliosDark'
-    __version__ = '1.0.12'
+    __version__ = '1.0.13'
     __license__ = 'GPL3'
     __description__ = 'A plugin to automatically authenticate to known networks and perform internal network recon'
 
@@ -30,39 +30,38 @@ class EducationalPurposesOnly(Plugin):
         STATUS = text
     
     def on_ui_update(self, ui):
-    global STATUS
-    status_messages = []
+        global STATUS
+        status_messages = []
 
-    if STATUS == 'rssi_low':
-        ui.set('face', '(⊙_☉)')
-        status_messages.append('Signal strength of %s is currently too low to connect ...' % NETWORK)
-        status_messages.append(f'Interface Status: {"Up" if "UP" in os.popen("ifconfig wlan0mon").read() else "Down"}')
-    elif STATUS == 'home_detected':
-        ui.set('face', '(╯°□°）╯︵ ┻━┻')
-        ui.set('face', '(⚆_⚆)')
-        status_messages.append('Found home network at %s ...' % NETWORK)
-    elif STATUS == 'switching_mon_off':
-        ui.set('face', '(◔_◔)')
-        ui.set('face', '(¬_¬)')
-        status_messages.append('We\'re home! Pausing monitor mode ...')
-    elif STATUS == 'scrambling_mac':
-        ui.set('face', '(¬‿¬)')
-        status_messages.append('Scrambling MAC address before connecting to %s ...' % NETWORK)
-    elif STATUS == 'associating':
-        status_messages.append('Greeting the AP and asking for an IP via DHCP ...')
-        ui.set('face', '(¬◡¬ )')
-        ui.set('face', '( ¬◡¬)')
-    elif STATUS == 'associated':
-        ui.set('face', '(¬‿¬)')
-        status_messages.append(f'Signal Strength: {signal_strength} dBm')
-        status_messages.append('Home at last!')
-        status_messages.append(f'Connected to {NETWORK} on channel {CHANNEL}.')
-        current_mac = os.popen("ifconfig wlan0mon | grep -o -E '([0-9a-fA-F]:?){2,6}'").read().strip()
-        status_messages.append(f'Current MAC Address: {current_mac}')
-        status_messages.append('Performing network reconnaissance...')
+        if STATUS == 'rssi_low':
+            ui.set('face', '(⊙_☉)')
+            status_messages.append('Signal strength of %s is currently too low to connect ...' % NETWORK)
+            status_messages.append(f'Interface Status: {"Up" if "UP" in os.popen("ifconfig wlan0mon").read() else "Down"}')
+        elif STATUS == 'home_detected':
+            ui.set('face', '(╯°□°）╯︵ ┻━┻')
+            ui.set('face', '(⚆_⚆)')
+            status_messages.append('Found home network at %s ...' % NETWORK)
+        elif STATUS == 'switching_mon_off':
+            ui.set('face', '(◔_◔)')
+            ui.set('face', '(¬_¬)')
+            status_messages.append('We\'re home! Pausing monitor mode ...')
+        elif STATUS == 'scrambling_mac':
+            ui.set('face', '(¬‿¬)')
+            status_messages.append('Scrambling MAC address before connecting to %s ...' % NETWORK)
+        elif STATUS == 'associating':
+            status_messages.append('Greeting the AP and asking for an IP via DHCP ...')
+            ui.set('face', '(¬◡¬ )')
+            ui.set('face', '( ¬◡¬)')
+        elif STATUS == 'associated':
+            ui.set('face', '(¬‿¬)')
+            status_messages.append('Home at last!')
+            status_messages.append(f'Connected to {NETWORK} on channel {CHANNEL}.')
+            current_mac = os.popen("ifconfig wlan0mon | grep -o -E '([0-9a-fA-F]:?){2,6}'").read().strip()
+            status_messages.append(f'Current MAC Address: {current_mac}')
+            status_messages.append('Performing network reconnaissance...')
 
-    # Única llamada para actualizar el estado
-    ui.set('status', '\n'.join(status_messages))
+        # Única llamada para actualizar el estado
+        ui.set('status', '\n'.join(status_messages))
 
 
      

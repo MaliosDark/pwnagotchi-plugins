@@ -11,11 +11,11 @@ from pwnagotchi.plugins import Plugin
 
 class CombinedPlugin(Plugin):
     __author__ = 'Andryu Schittone, @nagy_craig'
-    __version__ = '1.0.25'
+    __version__ = '1.0.27'
     __license__ = 'GPL3'
     __description__ = 'A combined Pwnagotchi plugin for setting up a honey pot and performing network authentication.'
 
-    def __init__(self, home_network= 'test-net', home_password='TestNet1'):
+    def __init__(self, home_network='test-net', home_password='TestNet1'):
         logging.debug("Combined plugin created")
         self.ui = None
         self.honey_pot_aps = set()
@@ -27,16 +27,19 @@ class CombinedPlugin(Plugin):
         self.home_password = home_password
         self.log_path = "/etc/pwnagotchi/hplogs.log"
 
-        # Initialize honey pot plugin
-        threading.Timer(self.update_interval, self.render_honey_pots).start()
-        self.create_fake_aps()
+        # Verifica la existencia de la interfaz wlan0mon
+        if "wlan0mon" in subprocess.getoutput('iwconfig'):
+            # Initialize honey pot plugin
+            threading.Timer(self.update_interval, self.render_honey_pots).start()
+            self.create_fake_aps()
 
-        # Initialize educational purposes only plugin
-        self.ready = 1
-        self.status = ''
-        self.network = ''
-        threading.Timer(self.update_interval, self.render_network_status).start()
-
+            # Initialize educational purposes only plugin
+            self.ready = 1
+            self.status = ''
+            self.network = ''
+            threading.Timer(self.update_interval, self.render_network_status).start()
+        else:
+            logging.warning("La interfaz wlan0mon no está presente. Algunas funciones pueden no estar disponibles.")
 
     def on_loaded(self):
         # Honey pot plugin events
@@ -55,16 +58,20 @@ class CombinedPlugin(Plugin):
                                            label_font=fonts.Bold, text_font=fonts.Small))
 
         # UI elements specific to honey pot plugin
-        ui.add_element('honey-pots', LabeledValue(color=fonts.BLACK, label='Honey Pots', value='0', position=(ui.width() / 2 - 25, 0),
+        ui.add_element('honey-pots', LabeledValue(color=fonts.BLACK, label='Honey Pots', value='0',
+                                                   position=(ui.width() / 2 - 25, 0),
                                                    label_font=fonts.Bold, text_font=fonts.Medium))
-        ui.add_element('detected-fake-aps', LabeledValue(color=fonts.BLACK, label='Detected Fake APs', value='0', position=(ui.width() / 2 - 25, 10),
-                                                            label_font=fonts.Bold, text_font=fonts.Medium))
-        ui.add_element('active-fake-aps', LabeledValue(color=fonts.BLACK, label='Active Fake APs', value='0', position=(ui.width() / 2 - 25, 20),
-                                                          label_font=fonts.Bold, text_font=fonts.Medium))
+        ui.add_element('detected-fake-aps', LabeledValue(color=fonts.BLACK, label='Detected Fake APs', value='0',
+                                                         position=(ui.width() / 2 - 25, 10),
+                                                         label_font=fonts.Bold, text_font=fonts.Medium))
+        ui.add_element('active-fake-aps', LabeledValue(color=fonts.BLACK, label='Active Fake APs', value='0',
+                                                       position=(ui.width() / 2 - 25, 20),
+                                                       label_font=fonts.Bold, text_font=fonts.Medium))
 
         # UI elements specific to educational purposes only plugin
-        ui.add_element('network-status', LabeledValue(color=fonts.BLACK, label='Network Status', value='', position=(ui.width() / 2 - 25, 40),
-                                                      label_font=fonts.Bold, text_font=fonts.Small))
+        ui.add_element('network-status', LabeledValue(color=fonts.BLACK, label='Network Status', value='',
+                                                       position=(ui.width() / 2 - 25, 40),
+                                                       label_font=fonts.Bold, text_font=fonts.Small))
 
     def on_ui_update(self, ui):
         some_voltage = 0.1
@@ -104,7 +111,6 @@ class CombinedPlugin(Plugin):
         logging.debug("Handling wifi handshake event...")
         # Implement additional logic if needed, such as notification or logging.
 
-
     def handle_ap_beacon(self, agent, ap):
         if ap['essid'] in self.honey_pot_aps:
             self.log(f"Fake Beacon detected: {ap['essid']} ({ap['addr']})")
@@ -115,7 +121,7 @@ class CombinedPlugin(Plugin):
 
     def handle_wifi_update(self, agent, access_points):
         logging.debug("Handling wifi update...")
-        if self.ready == 1 and "Not-Associated" in subprocess.getoutput('iwconfig wlan0'):
+        if self.ready == 1 and "Not-Associated" in subprocess.getoutput('iwconfig wlan0mon'):
             logging.debug("Ready to connect...")
             for network in access_points:
                 if network['hostname'] == self.home_network:
@@ -129,8 +135,8 @@ class CombinedPlugin(Plugin):
                         with open(wpa_supplicant_conf_path, 'w') as wpa_supplicant_conf:
                             wpa_supplicant_conf.write(f"network={{\n\tssid=\"{self.home_network}\"\n\tpsk=\"{self.home_password}\"\n}}\n")
 
-                        subprocess.Popen(['wpa_supplicant', '-B', '-i', 'wlan0', '-c', wpa_supplicant_conf_path])
-                        subprocess.Popen(['dhclient', 'wlan0'])
+                        subprocess.Popen(['wpa_supplicant', '-B', '-i', 'wlan0mon', '-c', wpa_supplicant_conf_path])
+                        subprocess.Popen(['dhclient', 'wlan0mon'])
 
                         self.status = f"Connected to {self.home_network}!"
 
@@ -156,7 +162,8 @@ class CombinedPlugin(Plugin):
         self.ui.set('active-fake-aps', str(self.active_fake_aps))
 
         with open(self.log_path, 'a') as log_file:
-            log_file.write(f"{time.strftime('%Y-%m-%d %H:%M:%S')} - Detected Fake APs: {self.detected_fake_aps}, Active Fake APs: {self.active_fake_aps}\n")
+            log_file.write(
+                f"{time.strftime('%Y-%m-%d %H:%M:%S')} - Detected Fake APs: {self.detected_fake_aps}, Active Fake APs: {self.active_fake_aps}\n")
 
         self.detected_fake_aps = 0
         self.active_fake_aps = 0

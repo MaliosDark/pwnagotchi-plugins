@@ -11,7 +11,7 @@ from pwnagotchi.plugins import Plugin
 
 class CombinedPlugin(Plugin):
     __author__ = 'Andryu Schittone, @nagy_craig'
-    __version__ = '1.0.21'
+    __version__ = '1.0.24'
     __license__ = 'GPL3'
     __description__ = 'A combined Pwnagotchi plugin for setting up a honey pot and performing network authentication.'
 
@@ -112,23 +112,24 @@ class CombinedPlugin(Plugin):
             self.active_fake_aps += 1
 
     def handle_wifi_update(self, agent, access_points):
-    if self.ready == 1 and "Not-Associated" in subprocess.getoutput('iwconfig wlan0'):
-        for network in access_points:
-            if network['hostname'] == self.home_network:
-                signal_strength = network['rssi']
-                channel = network['channel']
-                if signal_strength >= 60:
-                    self.ready = 0
-                    self.status = f"Connecting to {self.home_network}..."
+        if self.ready == 1 and "Not-Associated" in subprocess.getoutput('iwconfig wlan0'):
+            for network in access_points:
+                if network['hostname'] == self.home_network:
+                    signal_strength = network['rssi']
+                    channel = network['channel']
+                    if signal_strength >= 60:
+                        self.ready = 0
+                        self.status = f"Connecting to {self.home_network}..."
 
-                    wpa_supplicant_conf_path = '/etc/wpa_supplicant/wpa_supplicant.conf'
-                    with open(wpa_supplicant_conf_path, 'w') as wpa_supplicant_conf:
-                        wpa_supplicant_conf.write(f"network={{\n\tssid=\"{self.home_network}\"\n\tpsk=\"{self.home_password}\"\n}}\n")
+                        wpa_supplicant_conf_path = '/etc/wpa_supplicant/wpa_supplicant.conf'
+                        with open(wpa_supplicant_conf_path, 'w') as wpa_supplicant_conf:
+                            wpa_supplicant_conf.write(f"network={{\n\tssid=\"{self.home_network}\"\n\tpsk=\"{self.home_password}\"\n}}\n")
 
-                    subprocess.Popen(['wpa_supplicant', '-B', '-i', 'wlan0', '-c', wpa_supplicant_conf_path])
-                    subprocess.Popen(['dhclient', 'wlan0'])
+                        subprocess.Popen(['wpa_supplicant', '-B', '-i', 'wlan0', '-c', wpa_supplicant_conf_path])
+                        subprocess.Popen(['dhclient', 'wlan0'])
 
-                    self.status = f"Connected to {self.home_network}!"
+                        self.status = f"Connected to {self.home_network}!"
+
 
 
     def generate_fake_essid(self):

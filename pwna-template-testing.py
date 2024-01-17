@@ -11,10 +11,11 @@ import pwnagotchi.plugins as plugins
 import logging
 import os
 import shutil
+import subprocess
 
 class EgirlThemePlugin(plugins.Plugin):
     __author__ = 'MaliosDark'
-    __version__ = '1.0.9'
+    __version__ = '1.1.0'
     __name__ = "Egirl Theme"
     __license__ = 'GPL3'
     __description__ = 'Plugin to activate/deactivate the egirl-pwnagotchi theme'
@@ -40,7 +41,12 @@ class EgirlThemePlugin(plugins.Plugin):
         # Configure the Pwnagotchi configuration file with the new paths for custom faces
         self.update_config()
 
+        # Restart Pwnagotchi
+        self.restart_pwnagotchi()
+
     def download_and_extract(self, url, destination):
+        logging.info("Downloading and extracting theme files...")
+
         # Download the ZIP file from the theme repository
         os.system(f'wget {url} -O /tmp/egirl-pwnagotchi-master.zip')
 
@@ -60,7 +66,11 @@ class EgirlThemePlugin(plugins.Plugin):
             destination_path = os.path.join(destination_directory, file_name)
             shutil.move(source_path, destination_path)
 
+        logging.info("Theme files extracted and moved successfully.")
+
     def update_config(self):
+        logging.info("Updating Pwnagotchi configuration...")
+
         # Update the Pwnagotchi configuration file with the new paths for custom faces
         config_file = '/etc/pwnagotchi/config.toml'
 
@@ -111,6 +121,8 @@ class EgirlThemePlugin(plugins.Plugin):
         with open(config_file, 'w') as f:
             f.writelines(updated_lines)
 
+        logging.info("Pwnagotchi configuration updated successfully.")
+
     def on_ui_update(self, ui):
         # Customize the UI here as needed
         if not self.theme_enabled:
@@ -131,6 +143,8 @@ class EgirlThemePlugin(plugins.Plugin):
             self.restore_original_config()
 
     def restore_original_config(self):
+        logging.info("Restoring original Pwnagotchi configuration...")
+
         # Restore the original Pwnagotchi configuration file
         original_config = '/etc/pwnagotchi/config.toml.orig'
         config_file = '/etc/pwnagotchi/config.toml'
@@ -140,6 +154,8 @@ class EgirlThemePlugin(plugins.Plugin):
 
         # Remove the original configuration file
         os.system(f'rm {original_config}')
+
+        logging.info("Original Pwnagotchi configuration restored successfully.")
 
     def on_webhook(self, path, request):
         # Change the state of the theme (enabled/disabled) upon receiving a webhook
@@ -153,3 +169,11 @@ class EgirlThemePlugin(plugins.Plugin):
 
             # Return a response to the client that made the request
             return "Egirl-pwnagotchi theme " + ("activated" if self.theme_enabled else "deactivated")
+
+    def restart_pwnagotchi(self):
+        logging.info("Restarting Pwnagotchi...")
+        subprocess.call(['systemctl', 'restart', 'pwnagotchi'])
+
+# Instantiate the plugin
+plugin = EgirlThemePlugin()
+

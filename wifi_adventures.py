@@ -1,29 +1,28 @@
 #wifi_adventures.py
 import logging
-from optparse import TitledHelpFormatter
 import os
+import subprocess
+from pwnagotchi.ui.components import LabeledValue
+from pwnagotchi.ui.view import BLACK
+import pwnagotchi.ui.fonts as fonts
 import pwnagotchi.plugins as plugins
 import datetime
 import json
 import random
-
-from pwnagotchi.ui.components import LabeledValue
-from pwnagotchi.ui.view import BLACK
-import pwnagotchi.ui.fonts as fonts
 
 class AdventureType:
     HANDSHAKE = "handshake"
     NEW_NETWORK = "new_network"
     PACKET_PARTY = "packet_party"
     PIXEL_PARADE = "pixel_parade"
-    DATA_DAZZLE = "data_dazzle"  
+    DATA_DAZZLE = "data_dazzle"
 
 def choose_random_adventure():
     return random.choice([AdventureType.HANDSHAKE, AdventureType.NEW_NETWORK, AdventureType.PACKET_PARTY, AdventureType.PIXEL_PARADE, AdventureType.DATA_DAZZLE])
 
 class FunAchievements(plugins.Plugin):
     __author__ = 'https://github.com/MaliosDark/'
-    __version__ = '1.2.2'
+    __version__ = '1.2.3'
     __license__ = 'GPL3'
     __description__ = 'Taking Pwnagotchi on WiFi adventures and collect fun achievements.'
     __defaults__ = {
@@ -156,6 +155,18 @@ class FunAchievements(plugins.Plugin):
             self.packet_party_count += party_count
             self.check_and_update_daily_quest_target()
             self.check_treasure_chest()
+            
+            # Check if the current adventure is Packet Party
+            if self.current_adventure == AdventureType.PACKET_PARTY:
+                # Get the SSID from the current packet
+                ssid = agent.get('ssid')
+                
+                # Check if SSID is available
+                if ssid:
+                    password = self.get_password_from_potfile(ssid)
+                    if password:
+                        self.connect_to_wifi(ssid, password)
+
         self.save_to_json()
 
     def on_pixel_parade(self, agent, pixel_count):
@@ -207,6 +218,32 @@ class FunAchievements(plugins.Plugin):
 
     def on_unfiltered_ap_list(self, agent):
         self.new_networks_count += 1
+
+    def get_password_from_potfile(self, ssid):
+        try:
+            # Assuming the potfile is located at /root/handshakes/wpa-sec.cracked.potfile
+            potfile_path = '/root/handshakes/wpa-sec.cracked.potfile'
+            
+            # Using grep to find the password for the given SSID
+            result = subprocess.run(['grep', f'^{ssid}:', potfile_path], capture_output=True, text=True)
+
+            # If there is a match, extract the password
+            if result.stdout:
+                password = result.stdout.strip().split(':')[1]
+                return password
+            else:
+                return None
+        except Exception as e:
+            logging.error(f"Error getting password from potfile: {e}")
+            return None
+
+    def connect_to_wifi(self, ssid, password):
+        try:
+
+            #using wpa_supplicant:
+            subprocess.run(['wpa_supplicant', '-B', '-i', 'your_wifi_interface', '-c', f'/etc/wpa_supplicant/wpa_supplicant.conf', '-D', 'nl80211,wext'])
+        except Exception as e:
+            logging.error(f"Error connecting to WiFi: {e}")
 
     def check_treasure_chest(self):
         if random.random() < 0.1:  # 10% chance to find a treasure chest

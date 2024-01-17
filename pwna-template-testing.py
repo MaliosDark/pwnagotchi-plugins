@@ -23,7 +23,7 @@ import subprocess
 
 class EgirlThemePlugin(plugins.Plugin):
     __author__ = 'MaliosDark'
-    __version__ = '1.1.5'
+    __version__ = '1.1.6'
     __name__ = "Egirl Theme"
     __license__ = 'GPL3'
     __description__ = 'Plugin to activate/deactivate the egirl-pwnagotchi theme'
@@ -36,8 +36,7 @@ class EgirlThemePlugin(plugins.Plugin):
 
     def install_dependencies(self):
         logging.info("Installing dependencies...")
-        subprocess.run([sys.executable, '-m', 'pip', 'install', 'requests'])  # Agrega aquí cualquier otra dependencia que necesites
-
+        subprocess.run([sys.executable, '-m', 'pip', 'install', 'requests'])  
     def on_loaded(self):
         # Instalar dependencias al cargar el plugin
         self.install_dependencies()
@@ -94,6 +93,11 @@ class EgirlThemePlugin(plugins.Plugin):
             shutil.move(source_path, destination_path)
 
     def modify_paths_in_components(self, src_file, dest_file, custom_faces_directory):
+        # Verificar si el archivo components.py existe antes de intentar abrirlo
+        if not os.path.exists(src_file):
+            logging.error(f"File not found: {src_file}")
+            return
+
         # Read the source file
         with open(src_file, 'r') as f:
             src_lines = f.readlines()

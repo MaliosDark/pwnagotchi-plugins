@@ -1,8 +1,14 @@
 #THIS IS A TEST. TO LOAD THE NEW UI USING JUST A PLUGIN.
 #THIS PLUGIN IS BEING TESTED
-#DO NOT USE UNTIL TEST ARE CONFIRMED AND RESULTS ARE AVAILABLE
+#DO NOT USE UNTIL TESTS ARE CONFIRMED AND RESULTS ARE AVAILABLE
 #I DO INSIST!!
 #JUST WAIT A BIT
+
+import subprocess
+import sys
+
+# Instalar dependencias necesarias
+subprocess.run([sys.executable, '-m', 'pip', 'install', 'pillow'])
 
 from pwnagotchi.ui.components import LabeledValue, Widget, Text
 from pwnagotchi.ui.view import BLACK
@@ -17,7 +23,7 @@ import subprocess
 
 class EgirlThemePlugin(plugins.Plugin):
     __author__ = 'MaliosDark'
-    __version__ = '1.1.4'
+    __version__ = '1.1.5'
     __name__ = "Egirl Theme"
     __license__ = 'GPL3'
     __description__ = 'Plugin to activate/deactivate the egirl-pwnagotchi theme'
@@ -28,7 +34,14 @@ class EgirlThemePlugin(plugins.Plugin):
         # Variable to track whether the theme is enabled or disabled
         self.theme_enabled = False
 
+    def install_dependencies(self):
+        logging.info("Installing dependencies...")
+        subprocess.run([sys.executable, '-m', 'pip', 'install', 'requests'])  # Agrega aquí cualquier otra dependencia que necesites
+
     def on_loaded(self):
+        # Instalar dependencias al cargar el plugin
+        self.install_dependencies()
+
         logging.info("Egirl Theme loaded")
 
         # Path to the pwnagotchi directory where theme files will be stored
@@ -72,6 +85,53 @@ class EgirlThemePlugin(plugins.Plugin):
 
         # Return the correct destination directory for further configuration
         return destination_directory
+
+    def move_images_to_custom_faces(self, src_directory, dest_directory):
+        # Move the contents of the source directory to the destination directory
+        for file_name in os.listdir(src_directory):
+            source_path = os.path.join(src_directory, file_name)
+            destination_path = os.path.join(dest_directory, file_name)
+            shutil.move(source_path, destination_path)
+
+    def modify_paths_in_components(self, src_file, dest_file, custom_faces_directory):
+        # Read the source file
+        with open(src_file, 'r') as f:
+            src_lines = f.readlines()
+
+        # Modify the lines corresponding to the new paths for custom faces
+        updated_lines = []
+        for line in src_lines:
+            if 'look_r' in line:
+                updated_lines.append(f'            "value": "{custom_faces_directory}/LOOK_R.png",\n')
+            elif 'look_l' in line:
+                updated_lines.append(f'            "value": "{custom_faces_directory}/LOOK_L.png",\n')
+            # Add more conditions for other face names as needed
+            else:
+                updated_lines.append(line)
+
+        # Write the updated file
+        with open(dest_file, 'w') as f:
+            f.writelines(updated_lines)
+
+    def modify_paths_in_view(self, src_file, dest_file, custom_faces_directory):
+        # Read the source file
+        with open(src_file, 'r') as f:
+            src_lines = f.readlines()
+
+        # Modify the lines corresponding to the new paths for custom faces
+        updated_lines = []
+        for line in src_lines:
+            if 'look_r' in line:
+                updated_lines.append(f'        self.draw_sprite(self.LOOK_R, 0, 0)\n')
+            elif 'look_l' in line:
+                updated_lines.append(f'        self.draw_sprite(self.LOOK_L, 0, 0)\n')
+            # Add more conditions for other face names as needed
+            else:
+                updated_lines.append(line)
+
+        # Write the updated file
+        with open(dest_file, 'w') as f:
+            f.writelines(updated_lines)
 
     def update_config(self, custom_faces_directory):
         logging.info("Updating Pwnagotchi configuration...")
@@ -181,6 +241,20 @@ class EgirlThemePlugin(plugins.Plugin):
             # Return a response to the client that made the request
             return "Egirl-pwnagotchi theme " + ("activated" if self.theme_enabled else "deactivated")
 
-    def restart_pwnagotchi(self):
-        logging.info("Restarting Pwnagotchi...")
-        subprocess.call(['systemctl', 'restart', 'pwnagotchi'])
+# Customize these paths accordingly
+src_faces_directory = '/root/.pwnagotchi/egirl-pwnagotchi-master/faces'
+dest_faces_directory = '/root/.pwnagotchi/custom-faces/egirl-pwnagotchi'
+
+# Initialize the plugin
+egirl_theme_plugin = EgirlThemePlugin()
+
+# Move images to custom-faces directory
+egirl_theme_plugin.move_images_to_custom_faces(src_faces_directory, dest_faces_directory)
+
+# Modify paths in components.py
+components_file = '/usr/local/lib/python3.7/dist-packages/pwnagotchi/ui/components.py'
+egirl_theme_plugin.modify_paths_in_components(components_file, components_file, dest_faces_directory)
+
+# Modify paths in view.py
+view_file = '/usr/local/lib/python3.7/dist-packages/pwnagotchi/ui/view.py'
+egirl_theme_plugin.modify_paths_in_view(view_file, view_file, dest_faces_directory)

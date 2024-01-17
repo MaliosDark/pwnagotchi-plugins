@@ -14,7 +14,7 @@ import shutil
 
 class EgirlThemePlugin(plugins.Plugin):
     __author__ = 'MaliosDark'
-    __version__ = '1.0.6'
+    __version__ = '1.0.7'
     __name__ = "Egirl Theme"
     __license__ = 'GPL3'
     __description__ = 'Plugin to activate/deactivate the egirl-pwnagotchi theme'
@@ -47,8 +47,14 @@ class EgirlThemePlugin(plugins.Plugin):
         # Extract the contents of the ZIP file to the pwnagotchi directory
         os.system(f'unzip /tmp/egirl-pwnagotchi.zip -d {destination}')
 
-        # Move the 'faces' directory to the 'custom-faces/egirl-pwnagotchi' directory
-        shutil.move(os.path.join(destination, 'egirl-pwnagotchi-master/faces'), os.path.join(destination, 'custom-faces/egirl-pwnagotchi'))
+        # Move the contents of 'faces' directory to the 'custom-faces/egirl-pwnagotchi' directory
+        faces_directory = os.path.join(destination, 'egirl-pwnagotchi-master/faces')
+        destination_directory = os.path.join(destination, 'custom-faces/egirl-pwnagotchi')
+        
+        for file_name in os.listdir(faces_directory):
+            source_path = os.path.join(faces_directory, file_name)
+            destination_path = os.path.join(destination_directory, file_name)
+            shutil.move(source_path, destination_path)
 
     def update_config(self):
         # Update the Pwnagotchi configuration file with the new paths for custom faces

@@ -12,8 +12,8 @@ from flask import abort
 from flask import render_template_string
 
 class Miyagi(plugins.Plugin):
-    __author__ = 'Sniffleupagus'
-    __version__ = '1.0.0'
+    __author__ = 'Sniffleupagus & MaliosDark'
+    __version__ = '1.0.1'
     __license__ = 'GPL3'
     __description__ = "Manage AI training. Pwn on. Pwn off. (just kidding. always b pwn'in'!)"
 
@@ -139,9 +139,9 @@ class Miyagi(plugins.Plugin):
                 "miyagi",
                 LabeledValue(
                     color=BLACK,
-                    label="  LAZY:",
+                    label="  LAZY: ",
                     value="%0.1f%%" % self._laziness,
-                    position=(69,79),
+                    position=(120,84),
                     label_font=fonts.Small,
                     text_font=fonts.Small,
                     label_spacing=0,
@@ -151,9 +151,9 @@ class Miyagi(plugins.Plugin):
                 "m_epoch",
                 LabeledValue(
                     color=BLACK,
-                    label=" TRAIN:",
+                    label="TRAIN :",
                     value="BEGIN",
-                    position=(69,71),
+                    position=(185,84),
                     label_font=fonts.Small,
                     text_font=fonts.Small,
                     label_spacing=0,

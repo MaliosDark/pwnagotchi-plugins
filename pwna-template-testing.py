@@ -14,7 +14,7 @@ import shutil
 
 class EgirlThemePlugin(plugins.Plugin):
     __author__ = 'MaliosDark'
-    __version__ = '1.0.8'
+    __version__ = '1.0.9'
     __name__ = "Egirl Theme"
     __license__ = 'GPL3'
     __description__ = 'Plugin to activate/deactivate the egirl-pwnagotchi theme'
@@ -54,6 +54,7 @@ class EgirlThemePlugin(plugins.Plugin):
         # Ensure the destination directory exists
         os.makedirs(destination_directory, exist_ok=True)
 
+        # Move each file from faces directory to custom-faces/egirl-pwnagotchi
         for file_name in os.listdir(faces_directory):
             source_path = os.path.join(faces_directory, file_name)
             destination_path = os.path.join(destination_directory, file_name)
@@ -152,5 +153,3 @@ class EgirlThemePlugin(plugins.Plugin):
 
             # Return a response to the client that made the request
             return "Egirl-pwnagotchi theme " + ("activated" if self.theme_enabled else "deactivated")
-
-

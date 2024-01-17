@@ -16,14 +16,14 @@ class AdventureType:
     NEW_NETWORK = "new_network"
     PACKET_PARTY = "packet_party"
     PIXEL_PARADE = "pixel_parade"
-    DATA_DAZZLE = "data_dazzle"  # New adventure type
+    DATA_DAZZLE = "data_dazzle"  
 
 def choose_random_adventure():
     return random.choice([AdventureType.HANDSHAKE, AdventureType.NEW_NETWORK, AdventureType.PACKET_PARTY, AdventureType.PIXEL_PARADE, AdventureType.DATA_DAZZLE])
 
 class FunAchievements(plugins.Plugin):
     __author__ = 'https://github.com/MaliosDark/'
-    __version__ = '1.2.0'
+    __version__ = '1.2.1'
     __license__ = 'GPL3'
     __description__ = 'Taking Pwnagotchi on WiFi adventures and collect fun achievements.'
     __defaults__ = {
@@ -37,7 +37,7 @@ class FunAchievements(plugins.Plugin):
         self.new_networks_count = 0
         self.packet_party_count = 0
         self.pixel_parade_count = 0
-        self.data_dazzle_count = 0  # New counter for data dazzles
+        self.data_dazzle_count = 0 
         self.treasure_chests_count = 0
         self.title = ""
         self.last_claimed = None
@@ -47,15 +47,15 @@ class FunAchievements(plugins.Plugin):
 
     def get_label_based_on_adventure(self):
         if self.current_adventure == AdventureType.NEW_NETWORK:
-            return "New Adventure:"
+            return "New Adventure: "
         elif self.current_adventure == AdventureType.PACKET_PARTY:
-            return "Party Time:"
+            return "Party Time: "
         elif self.current_adventure == AdventureType.PIXEL_PARADE:
-            return "Pixel Parade:"
+            return "Pixel Parade: "
         elif self.current_adventure == AdventureType.DATA_DAZZLE:
-            return "Data Dazzle:"
+            return "Data Dazzle: "
         else:
-            return "Mysterious Quest:"
+            return "Mysterious Quest: "
 
     def load_from_json(self):
         logging.info('[FunAchievements] Loading data from JSON...')
@@ -81,7 +81,7 @@ class FunAchievements(plugins.Plugin):
         title = self.get_title_based_on_achievements()
         label = self.get_label_based_on_adventure()
 
-        ui.add_element('showFunAchievements', LabeledValue(color=BLACK, label=label, value=f"{self.handshake_count}/{self.daily_quest_target} ({title})", position=(0, 83), label_font=fonts.Medium, text_font=fonts.Medium))
+        ui.add_element('showFunAchievements', LabeledValue(color=BLACK, label=label, value=f"{self.handshake_count}/{self.daily_quest_target} ({title})", position=(0, 95), label_font=fonts.Medium, text_font=fonts.Medium))
 
     def on_ui_update(self, ui):
         if self.ready:

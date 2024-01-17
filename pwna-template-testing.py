@@ -12,7 +12,6 @@ import pwnagotchi.plugins as plugins
 import logging
 import os
 
-@pwnagotchi.plugins.register_plugin
 class EgirlThemePlugin(plugins.Plugin):
     __author__ = 'MaliosDark'
     __version__ = '1.0.1'
@@ -143,5 +142,3 @@ class EgirlThemePlugin(plugins.Plugin):
             return "Egirl-pwnagotchi theme " + ("activated" if self.theme_enabled else "deactivated")
 
 
-# Register the plugins
-plugins.register_plugin(EgirlThemePlugin())

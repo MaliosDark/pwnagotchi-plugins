@@ -34,7 +34,7 @@ def choose_random_adventure():
 
 class FunAchievements(plugins.Plugin):
     __author__ = 'https://github.com/MaliosDark/'
-    __version__ = '1.2.5'
+    __version__ = '1.2.6'
     __license__ = 'GPL3'
     __description__ = 'Taking Pwnagotchi on WiFi adventures and collect fun achievements.'
     __defaults__ = {
@@ -129,9 +129,14 @@ class FunAchievements(plugins.Plugin):
             95: "Master of the Matrix",
             100: "Legendary Adventurer"
         }
+        current_title = None
+
         for threshold, title in titles.items():
             if self.fun_achievement_count >= threshold:
-                return title
+                current_title = title
+
+        return current_title
+
 
 
     def get_title_based_on_achievements(self):

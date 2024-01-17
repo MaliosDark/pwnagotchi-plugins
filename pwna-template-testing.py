@@ -23,7 +23,7 @@ import subprocess
 
 class EgirlThemePlugin(plugins.Plugin):
     __author__ = 'MaliosDark'
-    __version__ = '1.1.6'
+    __version__ = '1.1.7'
     __name__ = "Egirl Theme"
     __license__ = 'GPL3'
     __description__ = 'Plugin to activate/deactivate the egirl-pwnagotchi theme'
@@ -256,9 +256,9 @@ egirl_theme_plugin = EgirlThemePlugin()
 egirl_theme_plugin.move_images_to_custom_faces(src_faces_directory, dest_faces_directory)
 
 # Modify paths in components.py
-components_file = '/usr/local/lib/python3.7/dist-packages/pwnagotchi/ui/components.py'
+components_file = '/usr/local/lib/python3.9/dist-packages/pwnagotchi/ui/components.py'
 egirl_theme_plugin.modify_paths_in_components(components_file, components_file, dest_faces_directory)
 
 # Modify paths in view.py
-view_file = '/usr/local/lib/python3.7/dist-packages/pwnagotchi/ui/view.py'
+view_file = '/usr/local/lib/python3.9/dist-packages/pwnagotchi/ui/view.py'
 egirl_theme_plugin.modify_paths_in_view(view_file, view_file, dest_faces_directory)

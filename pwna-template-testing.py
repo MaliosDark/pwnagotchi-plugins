@@ -14,7 +14,7 @@ import shutil
 
 class EgirlThemePlugin(plugins.Plugin):
     __author__ = 'MaliosDark'
-    __version__ = '1.0.7'
+    __version__ = '1.0.8'
     __name__ = "Egirl Theme"
     __license__ = 'GPL3'
     __description__ = 'Plugin to activate/deactivate the egirl-pwnagotchi theme'
@@ -42,15 +42,18 @@ class EgirlThemePlugin(plugins.Plugin):
 
     def download_and_extract(self, url, destination):
         # Download the ZIP file from the theme repository
-        os.system(f'wget {url} -O /tmp/egirl-pwnagotchi.zip')
+        os.system(f'wget {url} -O /tmp/egirl-pwnagotchi-master.zip')
 
         # Extract the contents of the ZIP file to the pwnagotchi directory
-        os.system(f'unzip /tmp/egirl-pwnagotchi.zip -d {destination}')
+        os.system(f'unzip /tmp/egirl-pwnagotchi-master.zip -d {destination}')
 
         # Move the contents of 'faces' directory to the 'custom-faces/egirl-pwnagotchi' directory
         faces_directory = os.path.join(destination, 'egirl-pwnagotchi-master/faces')
         destination_directory = os.path.join(destination, 'custom-faces/egirl-pwnagotchi')
-        
+
+        # Ensure the destination directory exists
+        os.makedirs(destination_directory, exist_ok=True)
+
         for file_name in os.listdir(faces_directory):
             source_path = os.path.join(faces_directory, file_name)
             destination_path = os.path.join(destination_directory, file_name)

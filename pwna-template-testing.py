@@ -4,10 +4,13 @@
 #I DO INSIST!!
 #JUST WAIT A BIT
 
-# Plugin para activar/desactivar el tema egirl-pwnagotchi en Pwnagotchi
-
+from pwnagotchi.ui.components import LabeledValue
+from pwnagotchi.ui.view import BLACK
+import pwnagotchi.ui.fonts as fonts
 import pwnagotchi.plugins as plugins
+import logging
 import os
+import shutil
 
 class EgirlThemePlugin(plugins.Plugin):
     __author__ = 'MaliosDark'
@@ -19,41 +22,39 @@ class EgirlThemePlugin(plugins.Plugin):
     def __init__(self):
         super().__init__()
 
-        # Variable para rastrear si el tema está activado o desactivado
+        # Variable to track whether the theme is enabled or disabled
         self.theme_enabled = False
 
     def on_loaded(self):
-        # Log para indicar que el tema se ha cargado
-        self.logger.info("Egirl Theme loaded")
+        logging.info("Egirl Theme loaded")
 
-        # Configuración inicial al cargar el tema
-        self.configure_theme()
-
-    def configure_theme(self):
-        # Ruta al directorio de pwnagotchi donde se almacenarán los archivos del tema
+        # Path to the pwnagotchi directory where theme files will be stored
         pwnagotchi_directory = '/root/.pwnagotchi/'
 
-        # URL al repositorio del tema egirl-pwnagotchi
+        # URL to the egirl-pwnagotchi theme repository
         theme_repo = 'https://github.com/PersephoneKarnstein/egirl-pwnagotchi/archive/main.zip'
 
-        # Descarga el archivo ZIP del repositorio del tema y lo extrae en el directorio de pwnagotchi
+        # Download the ZIP file from the theme repository and extract it to the pwnagotchi directory
         self.download_and_extract(theme_repo, pwnagotchi_directory)
 
-        # Configura el archivo de configuración de Pwnagotchi con las nuevas rutas de las caras personalizadas
+        # Configure the Pwnagotchi configuration file with the new paths for custom faces
         self.update_config()
 
     def download_and_extract(self, url, destination):
-        # Descarga el archivo ZIP del repositorio del tema
+        # Download the ZIP file from the theme repository
         os.system(f'wget {url} -O /tmp/egirl-pwnagotchi.zip')
 
-        # Extrae el contenido del ZIP al directorio de pwnagotchi
+        # Extract the contents of the ZIP file to the pwnagotchi directory
         os.system(f'unzip /tmp/egirl-pwnagotchi.zip -d {destination}')
 
+        # Move the 'faces' directory to the 'custom-faces' directory
+        shutil.move(os.path.join(destination, 'egirl-pwnagotchi-main/faces'), os.path.join(destination, 'custom-faces/egirl-pwnagotchi'))
+
     def update_config(self):
-        # Actualiza el archivo de configuración de Pwnagotchi con las nuevas rutas de las caras personalizadas
+        # Update the Pwnagotchi configuration file with the new paths for custom faces
         config_file = '/etc/pwnagotchi/config.toml'
 
-        # Diccionario que mapea las caras originales a las nuevas rutas
+        # Dictionary mapping original faces to new paths
         face_mapping = {
             'look_r': "( ⚆‿⚆)",
             'look_l': "(☉‿☉ )",
@@ -82,11 +83,11 @@ class EgirlThemePlugin(plugins.Plugin):
             'upload2': "(↼_↼)"
         }
 
-        # Lee el archivo de configuración existente
+        # Read the existing configuration file
         with open(config_file, 'r') as f:
             config_lines = f.readlines()
 
-        # Modifica las líneas correspondientes con las nuevas rutas de las caras personalizadas
+        # Modify the lines corresponding to the new paths for custom faces
         updated_lines = []
         for line in config_lines:
             for face_name, new_path in face_mapping.items():
@@ -96,36 +97,50 @@ class EgirlThemePlugin(plugins.Plugin):
             else:
                 updated_lines.append(line)
 
-        # Escribe el archivo de configuración actualizado
+        # Write the updated configuration file
         with open(config_file, 'w') as f:
             f.writelines(updated_lines)
 
+    def on_ui_update(self, ui):
+        # Customize the UI here as needed
+        if not self.theme_enabled:
+            return
+
+        # Your UI customization code goes here
+
+    def on_agent_updated(self, agent, old_pi, new_pi):
+        # Customize the agent here as needed
+        if not self.theme_enabled:
+            return
+
+        # Your agent customization code goes here
+
     def on_unload(self, ui):
-        # Restaura la configuración original al descargar o desactivar el tema
+        # Restore the original configuration when unloading the theme
         if self.theme_enabled:
             self.restore_original_config()
 
     def restore_original_config(self):
-        # Restaura el archivo de configuración original de Pwnagotchi
+        # Restore the original Pwnagotchi configuration file
         original_config = '/etc/pwnagotchi/config.toml.orig'
         config_file = '/etc/pwnagotchi/config.toml'
 
-        # Copia el archivo de configuración original al archivo actual
+        # Copy the original configuration file to the current file
         os.system(f'cp {original_config} {config_file}')
 
-        # Elimina el archivo de configuración original
+        # Remove the original configuration file
         os.system(f'rm {original_config}')
 
     def on_webhook(self, path, request):
-        # Cambia el estado del tema (activado/desactivado) al recibir un webhook
+        # Change the state of the theme (enabled/disabled) upon receiving a webhook
         if path == 'egirl-theme/toggle':
             self.theme_enabled = not self.theme_enabled
 
             if self.theme_enabled:
-                self.configure_theme()
+                self.update_config()
             else:
                 self.restore_original_config()
 
-            # Devuelve una respuesta al cliente que realizó la solicitud
-            return "Tema egirl-pwnagotchi " + ("activado" if self.theme_enabled else "desactivado")
+            # Return a response to the client that made the request
+            return "Egirl-pwnagotchi theme " + ("activated" if self.theme_enabled else "deactivated")
 

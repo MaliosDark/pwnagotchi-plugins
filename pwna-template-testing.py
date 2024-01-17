@@ -14,7 +14,7 @@ import shutil
 
 class EgirlThemePlugin(plugins.Plugin):
     __author__ = 'MaliosDark'
-    __version__ = '1.0.5'
+    __version__ = '1.0.6'
     __name__ = "Egirl Theme"
     __license__ = 'GPL3'
     __description__ = 'Plugin to activate/deactivate the egirl-pwnagotchi theme'
@@ -31,8 +31,8 @@ class EgirlThemePlugin(plugins.Plugin):
         # Path to the pwnagotchi directory where theme files will be stored
         pwnagotchi_directory = '/root/.pwnagotchi/'
 
-        # URL to the egirl-pwnagotchi theme repository
-        theme_repo = 'https://github.com/PersephoneKarnstein/egirl-pwnagotchi/archive/main.zip'
+        # URL to the correct egirl-pwnagotchi theme repository
+        theme_repo = 'https://github.com/PersephoneKarnstein/egirl-pwnagotchi/archive/master.zip'
 
         # Download the ZIP file from the theme repository and extract it to the pwnagotchi directory
         self.download_and_extract(theme_repo, pwnagotchi_directory)
@@ -42,10 +42,10 @@ class EgirlThemePlugin(plugins.Plugin):
 
     def download_and_extract(self, url, destination):
         # Download the ZIP file from the theme repository
-        os.system(f'wget {url} -O /tmp/egirl-pwnagotchi-master.zip')
+        os.system(f'wget {url} -O /tmp/egirl-pwnagotchi.zip')
 
         # Extract the contents of the ZIP file to the pwnagotchi directory
-        os.system(f'unzip /tmp/egirl-pwnagotchi-master.zip -d {destination}')
+        os.system(f'unzip /tmp/egirl-pwnagotchi.zip -d {destination}')
 
         # Move the 'faces' directory to the 'custom-faces/egirl-pwnagotchi' directory
         shutil.move(os.path.join(destination, 'egirl-pwnagotchi-master/faces'), os.path.join(destination, 'custom-faces/egirl-pwnagotchi'))
@@ -144,6 +144,4 @@ class EgirlThemePlugin(plugins.Plugin):
             # Return a response to the client that made the request
             return "Egirl-pwnagotchi theme " + ("activated" if self.theme_enabled else "deactivated")
 
-            # Return a response to the client that made the request
-            return "Egirl-pwnagotchi theme " + ("activated" if self.theme_enabled else "deactivated")
 

@@ -4,10 +4,12 @@
 #I DO INSIST!!
 #JUST WAIT A BIT
 
-from pwnagotchi.ui.components import LabeledValue
+from pwnagotchi.ui.components import LabeledValue, Widget, Text
 from pwnagotchi.ui.view import BLACK
 import pwnagotchi.ui.fonts as fonts
 import pwnagotchi.plugins as plugins
+from PIL import Image, ImageOps
+from textwrap import TextWrapper
 import logging
 import os
 import shutil
@@ -15,7 +17,7 @@ import subprocess
 
 class EgirlThemePlugin(plugins.Plugin):
     __author__ = 'MaliosDark'
-    __version__ = '1.1.0'
+    __version__ = '1.1.1'
     __name__ = "Egirl Theme"
     __license__ = 'GPL3'
     __description__ = 'Plugin to activate/deactivate the egirl-pwnagotchi theme'
@@ -173,7 +175,3 @@ class EgirlThemePlugin(plugins.Plugin):
     def restart_pwnagotchi(self):
         logging.info("Restarting Pwnagotchi...")
         subprocess.call(['systemctl', 'restart', 'pwnagotchi'])
-
-# Instantiate the plugin
-plugin = EgirlThemePlugin()
-

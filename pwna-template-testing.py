@@ -4,12 +4,6 @@
 #I DO INSIST!!
 #JUST WAIT A BIT
 
-#THIS IS A TEST. TO LOAD THE NEW UI USING JUST A PLUGIN.
-#THIS PLUGIN IS BEING TESTED
-#DO NOT USE UNTIL TEST ARE CONFIRMED AND RESULTS ARE AVAILABLE
-#I DO INSIST!!
-#JUST WAIT A BIT
-
 from pwnagotchi.ui.components import LabeledValue, Widget, Text
 from pwnagotchi.ui.view import BLACK
 import pwnagotchi.ui.fonts as fonts
@@ -23,7 +17,7 @@ import subprocess
 
 class EgirlThemePlugin(plugins.Plugin):
     __author__ = 'MaliosDark'
-    __version__ = '1.1.3'
+    __version__ = '1.1.4'
     __name__ = "Egirl Theme"
     __license__ = 'GPL3'
     __description__ = 'Plugin to activate/deactivate the egirl-pwnagotchi theme'
@@ -186,11 +180,6 @@ class EgirlThemePlugin(plugins.Plugin):
 
             # Return a response to the client that made the request
             return "Egirl-pwnagotchi theme " + ("activated" if self.theme_enabled else "deactivated")
-
-    def restart_pwnagotchi(self):
-        logging.info("Restarting Pwnagotchi...")
-        subprocess.call(['systemctl', 'restart', 'pwnagotchi'])
-
 
     def restart_pwnagotchi(self):
         logging.info("Restarting Pwnagotchi...")

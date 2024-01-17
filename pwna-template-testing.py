@@ -4,17 +4,14 @@
 #I DO INSIST!!
 #JUST WAIT A BIT
 
+# Plugin para activar/desactivar el tema egirl-pwnagotchi en Pwnagotchi
 
-from pwnagotchi.ui.components import LabeledValue
-from pwnagotchi.ui.view import BLACK
-import pwnagotchi.ui.fonts as fonts
 import pwnagotchi.plugins as plugins
-import logging
 import os
 
 class EgirlThemePlugin(plugins.Plugin):
     __author__ = 'MaliosDark'
-    __version__ = '1.0.2'
+    __version__ = '1.0.3'
     __name__ = "Egirl Theme"
     __license__ = 'GPL3'
     __description__ = 'Plugin to activate/deactivate the egirl-pwnagotchi theme'
@@ -22,36 +19,41 @@ class EgirlThemePlugin(plugins.Plugin):
     def __init__(self):
         super().__init__()
 
-        # Variable to track whether the theme is enabled or disabled
+        # Variable para rastrear si el tema está activado o desactivado
         self.theme_enabled = False
 
     def on_loaded(self):
-        logging.info("Egirl Theme loaded")
+        # Log para indicar que el tema se ha cargado
+        self.logger.info("Egirl Theme loaded")
 
-        # Path to the pwnagotchi directory where theme files will be stored
+        # Configuración inicial al cargar el tema
+        self.configure_theme()
+
+    def configure_theme(self):
+        # Ruta al directorio de pwnagotchi donde se almacenarán los archivos del tema
         pwnagotchi_directory = '/root/.pwnagotchi/'
 
-        # URL to the egirl-pwnagotchi theme repository
+        # URL al repositorio del tema egirl-pwnagotchi
         theme_repo = 'https://github.com/PersephoneKarnstein/egirl-pwnagotchi/archive/main.zip'
 
-        # Download the ZIP file from the theme repository and extract it to the pwnagotchi directory
+        # Descarga el archivo ZIP del repositorio del tema y lo extrae en el directorio de pwnagotchi
         self.download_and_extract(theme_repo, pwnagotchi_directory)
 
-        # Configure the Pwnagotchi configuration file with the new paths for custom faces
+        # Configura el archivo de configuración de Pwnagotchi con las nuevas rutas de las caras personalizadas
         self.update_config()
 
     def download_and_extract(self, url, destination):
-        # Download the ZIP file from the theme repository
+        # Descarga el archivo ZIP del repositorio del tema
         os.system(f'wget {url} -O /tmp/egirl-pwnagotchi.zip')
 
-        # Extract the contents of the ZIP file to the pwnagotchi directory
+        # Extrae el contenido del ZIP al directorio de pwnagotchi
         os.system(f'unzip /tmp/egirl-pwnagotchi.zip -d {destination}')
 
     def update_config(self):
-        # Update the Pwnagotchi configuration file with the new paths for custom faces
+        # Actualiza el archivo de configuración de Pwnagotchi con las nuevas rutas de las caras personalizadas
         config_file = '/etc/pwnagotchi/config.toml'
 
-        # Dictionary mapping original faces to new paths
+        # Diccionario que mapea las caras originales a las nuevas rutas
         face_mapping = {
             'look_r': "( ⚆‿⚆)",
             'look_l': "(☉‿☉ )",
@@ -80,11 +82,11 @@ class EgirlThemePlugin(plugins.Plugin):
             'upload2': "(↼_↼)"
         }
 
-        # Read the existing configuration file
+        # Lee el archivo de configuración existente
         with open(config_file, 'r') as f:
             config_lines = f.readlines()
 
-        # Modify the lines corresponding to the new paths for custom faces
+        # Modifica las líneas correspondientes con las nuevas rutas de las caras personalizadas
         updated_lines = []
         for line in config_lines:
             for face_name, new_path in face_mapping.items():
@@ -94,51 +96,36 @@ class EgirlThemePlugin(plugins.Plugin):
             else:
                 updated_lines.append(line)
 
-        # Write the updated configuration file
+        # Escribe el archivo de configuración actualizado
         with open(config_file, 'w') as f:
             f.writelines(updated_lines)
 
-    def on_ui_update(self, ui):
-        # Customize the UI here as needed
-        if not self.theme_enabled:
-            return
-
-        # Your UI customization code goes here
-
-    def on_agent_updated(self, agent, old_pi, new_pi):
-        # Customize the agent here as needed
-        if not self.theme_enabled:
-            return
-
-        # Your agent customization code goes here
-
     def on_unload(self, ui):
-        # Restore the original configuration when unloading the theme
+        # Restaura la configuración original al descargar o desactivar el tema
         if self.theme_enabled:
             self.restore_original_config()
 
     def restore_original_config(self):
-        # Restore the original Pwnagotchi configuration file
+        # Restaura el archivo de configuración original de Pwnagotchi
         original_config = '/etc/pwnagotchi/config.toml.orig'
         config_file = '/etc/pwnagotchi/config.toml'
 
-        # Copy the original configuration file to the current file
+        # Copia el archivo de configuración original al archivo actual
         os.system(f'cp {original_config} {config_file}')
 
-        # Remove the original configuration file
+        # Elimina el archivo de configuración original
         os.system(f'rm {original_config}')
 
     def on_webhook(self, path, request):
-        # Change the state of the theme (enabled/disabled) upon receiving a webhook
+        # Cambia el estado del tema (activado/desactivado) al recibir un webhook
         if path == 'egirl-theme/toggle':
             self.theme_enabled = not self.theme_enabled
 
             if self.theme_enabled:
-                self.update_config()
+                self.configure_theme()
             else:
                 self.restore_original_config()
 
-            # Return a response to the client that made the request
-            return "Egirl-pwnagotchi theme " + ("activated" if self.theme_enabled else "deactivated")
-
+            # Devuelve una respuesta al cliente que realizó la solicitud
+            return "Tema egirl-pwnagotchi " + ("activado" if self.theme_enabled else "desactivado")
 

@@ -23,7 +23,7 @@ def choose_random_adventure():
 
 class FunAchievements(plugins.Plugin):
     __author__ = 'https://github.com/MaliosDark/'
-    __version__ = '1.2.1'
+    __version__ = '1.2.2'
     __license__ = 'GPL3'
     __description__ = 'Taking Pwnagotchi on WiFi adventures and collect fun achievements.'
     __defaults__ = {
@@ -143,11 +143,13 @@ class FunAchievements(plugins.Plugin):
             json.dump(data, file)
 
     def on_handshake(self, agent, filename, access_point, client_station):
+        logging.info(f"[FunAchievements] on_handshake - Current Adventure: {self.current_adventure}, Handshake Count: {self.handshake_count}")
         if self.current_adventure == AdventureType.HANDSHAKE:
             self.handshake_count += 1
             self.check_and_update_daily_quest_target()
             self.check_treasure_chest()
         self.save_to_json()
+
 
     def on_packet_party(self, agent, party_count):
         if self.current_adventure == AdventureType.PACKET_PARTY:

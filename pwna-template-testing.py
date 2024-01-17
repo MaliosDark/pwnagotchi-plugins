@@ -4,6 +4,12 @@
 #I DO INSIST!!
 #JUST WAIT A BIT
 
+#THIS IS A TEST. TO LOAD THE NEW UI USING JUST A PLUGIN.
+#THIS PLUGIN IS BEING TESTED
+#DO NOT USE UNTIL TEST ARE CONFIRMED AND RESULTS ARE AVAILABLE
+#I DO INSIST!!
+#JUST WAIT A BIT
+
 from pwnagotchi.ui.components import LabeledValue, Widget, Text
 from pwnagotchi.ui.view import BLACK
 import pwnagotchi.ui.fonts as fonts
@@ -17,7 +23,7 @@ import subprocess
 
 class EgirlThemePlugin(plugins.Plugin):
     __author__ = 'MaliosDark'
-    __version__ = '1.1.1'
+    __version__ = '1.1.3'
     __name__ = "Egirl Theme"
     __license__ = 'GPL3'
     __description__ = 'Plugin to activate/deactivate the egirl-pwnagotchi theme'
@@ -37,11 +43,11 @@ class EgirlThemePlugin(plugins.Plugin):
         # URL to the correct egirl-pwnagotchi theme repository
         theme_repo = 'https://github.com/PersephoneKarnstein/egirl-pwnagotchi/archive/master.zip'
 
-        # Download the ZIP file from the theme repository and extract it to the pwnagotchi directory
-        self.download_and_extract(theme_repo, pwnagotchi_directory)
+        # Call download_and_extract to get the custom_faces_directory
+        custom_faces_directory = self.download_and_extract(theme_repo, pwnagotchi_directory)
 
         # Configure the Pwnagotchi configuration file with the new paths for custom faces
-        self.update_config()
+        self.update_config(custom_faces_directory)
 
         # Restart Pwnagotchi
         self.restart_pwnagotchi()
@@ -70,7 +76,10 @@ class EgirlThemePlugin(plugins.Plugin):
 
         logging.info("Theme files extracted and moved successfully.")
 
-    def update_config(self):
+        # Return the correct destination directory for further configuration
+        return destination_directory
+
+    def update_config(self, custom_faces_directory):
         logging.info("Updating Pwnagotchi configuration...")
 
         # Update the Pwnagotchi configuration file with the new paths for custom faces
@@ -111,19 +120,25 @@ class EgirlThemePlugin(plugins.Plugin):
 
         # Modify the lines corresponding to the new paths for custom faces
         updated_lines = []
+        updated = False  # Flag to track if any update has been made
+
         for line in config_lines:
             for face_name, new_path in face_mapping.items():
                 if f'ui.faces.{face_name}' in line:
-                    updated_lines.append(f'ui.faces.{face_name} = "/custom-faces/egirl-pwnagotchi/{face_name.upper()}.png"\n')
+                    updated_lines.append(f'ui.faces.{face_name} = "{custom_faces_directory}/{face_name.upper()}.png"\n')
+                    updated = True
                     break
             else:
                 updated_lines.append(line)
 
-        # Write the updated configuration file
-        with open(config_file, 'w') as f:
-            f.writelines(updated_lines)
+        # Write the updated configuration file only if there was an update
+        if updated:
+            with open(config_file, 'w') as f:
+                f.writelines(updated_lines)
 
-        logging.info("Pwnagotchi configuration updated successfully.")
+            logging.info("Pwnagotchi configuration updated successfully.")
+        else:
+            logging.info("No updates needed in Pwnagotchi configuration.")
 
     def on_ui_update(self, ui):
         # Customize the UI here as needed
@@ -171,6 +186,11 @@ class EgirlThemePlugin(plugins.Plugin):
 
             # Return a response to the client that made the request
             return "Egirl-pwnagotchi theme " + ("activated" if self.theme_enabled else "deactivated")
+
+    def restart_pwnagotchi(self):
+        logging.info("Restarting Pwnagotchi...")
+        subprocess.call(['systemctl', 'restart', 'pwnagotchi'])
+
 
     def restart_pwnagotchi(self):
         logging.info("Restarting Pwnagotchi...")

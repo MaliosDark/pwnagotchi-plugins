@@ -1,4 +1,16 @@
 #wifi_adventures.py
+
+## Disclaimer
+#**Note:** This plugin is created for educational purposes
+#The author does not take responsibility for any misuse or unauthorized activities conducted with this plugin.
+#Be aware of and comply with legal and ethical standards when using this software.
+#Always respect privacy, adhere to local laws, and ensure that your actions align with the intended educational purpose of the plugin.
+#Use this plugin responsibly and ethically.
+#Any actions that violate laws or infringe upon the rights of others are not endorsed or supported.
+#By using this software, you acknowledge that the author is not liable for any consequences resulting from its misuse.
+#If you have any concerns or questions regarding the ethical use of this plugin, please contact the author for guidance.
+
+
 import logging
 import os
 import subprocess
@@ -22,7 +34,7 @@ def choose_random_adventure():
 
 class FunAchievements(plugins.Plugin):
     __author__ = 'https://github.com/MaliosDark/'
-    __version__ = '1.2.3'
+    __version__ = '1.2.4'
     __license__ = 'GPL3'
     __description__ = 'Taking Pwnagotchi on WiFi adventures and collect fun achievements.'
     __defaults__ = {
@@ -212,9 +224,15 @@ class FunAchievements(plugins.Plugin):
         if self.last_claimed is None or self.last_claimed < today:
             self.last_claimed = today
             self.daily_quest_target += 2
+
             if self.is_adventure_completed():
                 self.fun_achievement_count += 1
+
+            # Move the adventure update logic outside of is_adventure_completed()
             self.current_adventure = choose_random_adventure()
+
+        # Save changes to JSON after updating data
+        self.save_to_json()
 
     def on_unfiltered_ap_list(self, agent):
         self.new_networks_count += 1

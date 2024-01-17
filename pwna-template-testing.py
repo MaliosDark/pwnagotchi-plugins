@@ -12,10 +12,10 @@ import pwnagotchi.plugins as plugins
 import logging
 import os
 
-
+@pwnagotchi.plugins.register_plugin
 class EgirlThemePlugin(plugins.Plugin):
     __author__ = 'MaliosDark'
-    __version__ = '1.0.0'
+    __version__ = '1.0.1'
     __name__ = "Egirl Theme"
     __license__ = 'GPL3'
     __description__ = 'Plugin to activate/deactivate the egirl-pwnagotchi theme'

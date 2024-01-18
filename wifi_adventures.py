@@ -31,7 +31,7 @@ class AdventureType:
 
 class FunAchievements(plugins.Plugin):
     __author__ = 'https://github.com/MaliosDark/'
-    __version__ = '1.2.98'
+    __version__ = '1.2.99'
     __license__ = 'GPL3'
     __description__ = 'Taking Pwnagotchi on WiFi adventures and collect fun achievements.'
     __defaults__ = {
@@ -50,7 +50,7 @@ class FunAchievements(plugins.Plugin):
         self.title = ""
         self.last_claimed = None
         self.daily_quest_target = 3
-        self.current_adventure = FunAchievements.choose_random_adventure()  # Fix this line
+        self.current_adventure = self.choose_random_adventure()
         self.data_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'fun_achievements.json')
 
     def get_label_based_on_adventure(self):
@@ -258,7 +258,8 @@ class FunAchievements(plugins.Plugin):
             self.daily_quest_target += 2
 
             # Move the adventure update logic outside of is_adventure_completed()
-            self.current_adventure = choose_random_adventure()
+            self.current_adventure = self.choose_random_adventure()
+
 
             # Incrementar el título después de actualizar la aventura actual
             self.update_title()

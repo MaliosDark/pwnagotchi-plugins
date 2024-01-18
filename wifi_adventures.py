@@ -34,7 +34,7 @@ def choose_random_adventure():
 
 class FunAchievements(plugins.Plugin):
     __author__ = 'https://github.com/MaliosDark/'
-    __version__ = '1.2.91'
+    __version__ = '1.2.92'
     __license__ = 'GPL3'
     __description__ = 'Taking Pwnagotchi on WiFi adventures and collect fun achievements.'
     __defaults__ = {
@@ -246,14 +246,18 @@ class FunAchievements(plugins.Plugin):
             self.last_claimed = today
             self.daily_quest_target += 2
 
-            if self.is_adventure_completed():
-                self.fun_achievement_count += 1
-
             # Move the adventure update logic outside of is_adventure_completed()
             self.current_adventure = choose_random_adventure()
 
+            # Incrementar el título después de actualizar la aventura actual
+            self.update_title()
+
+            if self.is_adventure_completed():
+                self.fun_achievement_count += 1
+
         # Save changes to JSON after updating data
         self.save_to_json()
+
 
     def on_unfiltered_ap_list(self, agent):
         self.new_networks_count += 1

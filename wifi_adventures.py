@@ -257,15 +257,12 @@ class FunAchievements(plugins.Plugin):
             self.last_claimed = today
             self.daily_quest_target += 2
 
-            # Move the adventure update logic outside of is_adventure_completed()
-            self.current_adventure = self.choose_random_adventure()
-
-
             # Incrementar el título después de actualizar la aventura actual
             self.update_title()
 
             if self.is_adventure_completed():
                 self.fun_achievement_count += 1
+                self.current_adventure = self.choose_random_adventure()
 
         # Save changes to JSON after updating data
         self.save_to_json()

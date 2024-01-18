@@ -29,12 +29,12 @@ class AdventureType:
     PIXEL_PARADE = "pixel_parade"
     DATA_DAZZLE = "data_dazzle"
 
-def choose_random_adventure():
+def choose_random_adventure(self):
     return random.choice([AdventureType.HANDSHAKE, AdventureType.NEW_NETWORK, AdventureType.PACKET_PARTY, AdventureType.PIXEL_PARADE, AdventureType.DATA_DAZZLE])
 
 class FunAchievements(plugins.Plugin):
     __author__ = 'https://github.com/MaliosDark/'
-    __version__ = '1.2.94'
+    __version__ = '1.2.95'
     __license__ = 'GPL3'
     __description__ = 'Taking Pwnagotchi on WiFi adventures and collect fun achievements.'
     __defaults__ = {

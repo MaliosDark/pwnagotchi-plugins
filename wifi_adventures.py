@@ -34,7 +34,7 @@ def choose_random_adventure():
 
 class FunAchievements(plugins.Plugin):
     __author__ = 'https://github.com/MaliosDark/'
-    __version__ = '1.2.93'
+    __version__ = '1.2.94'
     __license__ = 'GPL3'
     __description__ = 'Taking Pwnagotchi on WiFi adventures and collect fun achievements.'
     __defaults__ = {
@@ -92,7 +92,7 @@ class FunAchievements(plugins.Plugin):
         title = self.get_title_based_on_achievements()
         label = self.get_label_based_on_adventure()
 
-        ui.add_element('showFunAchievements', LabeledValue(color=BLACK, label=label, value=f"{self.handshake_count}/{self.daily_quest_target} ({title})", position=(0, 95), label_font=fonts.Medium, text_font=fonts.Medium))
+        ui.add_element('showFunAchievements', LabeledValue(color=BLACK, label=label, value=f"{self.handshake_count}/{self.daily_quest_target} ({self.get_title_based_on_achievements()})", position=(0, 95), label_font=fonts.Medium, text_font=fonts.Medium))
 
     def on_ui_update(self, ui):
         if self.ready:
@@ -181,9 +181,12 @@ class FunAchievements(plugins.Plugin):
         self.check_and_update_daily_quest_target()
         self.check_treasure_chest()
 
-        self.update_title()
+        if self.is_adventure_completed():
+            self.fun_achievement_count += 1
+            self.update_title()
 
         self.save_to_json()
+
 
     def on_packet_party(self, agent, party_count):
         if self.current_adventure == AdventureType.PACKET_PARTY:

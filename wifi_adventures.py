@@ -34,7 +34,7 @@ def choose_random_adventure():
 
 class FunAchievements(plugins.Plugin):
     __author__ = 'https://github.com/MaliosDark/'
-    __version__ = '1.2.8'
+    __version__ = '1.2.9'
     __license__ = 'GPL3'
     __description__ = 'Taking Pwnagotchi on WiFi adventures and collect fun achievements.'
     __defaults__ = {
@@ -164,11 +164,11 @@ class FunAchievements(plugins.Plugin):
         
         # Incrementa el contador de handshakes según la dificultad de la aventura actual
         difficulty_multiplier = {
-            AdventureType.HANDSHAKE: 1,
-            AdventureType.NEW_NETWORK: 2,  
+            AdventureType.HANDSHAKE: 2,
+            AdventureType.NEW_NETWORK: 1,  
             AdventureType.PACKET_PARTY: 1,
             AdventureType.PIXEL_PARADE: 2,
-            AdventureType.DATA_DAZZLE: 5
+            AdventureType.DATA_DAZZLE: 1
         }
 
         self.handshake_count += difficulty_multiplier.get(self.current_adventure, 1)
@@ -218,23 +218,28 @@ class FunAchievements(plugins.Plugin):
         if self.current_adventure == AdventureType.HANDSHAKE:
             if self.handshake_count >= self.daily_quest_target:
                 self.fun_achievement_count += 1
+                self.update_title()
                 return True
             return False
         elif self.current_adventure == AdventureType.NEW_NETWORK:
             if self.new_networks_count >= self.daily_quest_target:
                 self.fun_achievement_count += 1
+                self.update_title()
                 return True
         elif self.current_adventure == AdventureType.PACKET_PARTY:
             if self.packet_party_count >= self.daily_quest_target:
                 self.fun_achievement_count += 1
+                self.update_title()
                 return True
         elif self.current_adventure == AdventureType.PIXEL_PARADE:
             if self.pixel_parade_count >= self.daily_quest_target:
                 self.fun_achievement_count += 1
+                self.update_title()
                 return True
         elif self.current_adventure == AdventureType.DATA_DAZZLE:
             if self.data_dazzle_count >= self.daily_quest_target:
                 self.fun_achievement_count += 1
+                self.update_title()
                 return True
         return False
 

@@ -15,7 +15,7 @@ import pwnagotchi.plugins as plugins
 
 class EgirlThemePlugin(plugins.Plugin):
     __author__ = 'MaliosDark'
-    __version__ = '1.2.0'
+    __version__ = '1.2.1'
     __name__ = "Egirl Theme"
     __license__ = 'GPL3'
     __description__ = 'Plugin to activate/deactivate the egirl-pwnagotchi theme'
@@ -199,12 +199,12 @@ class EgirlThemePlugin(plugins.Plugin):
             f.writelines(updated_lines)
 
         # Revertir cambios en components.py
-        components_file = '/usr/local/lib/python3.9/dist-packages/pwnagotchi/ui/components.py'
+        components_file = '/usr/local/lib/python3.7/dist-packages/pwnagotchi/ui/components.py'
         backup_file = '/files-backup/components.py'
         shutil.copy(backup_file, components_file)
 
         # Revertir cambios en view.py
-        view_file = '/usr/local/lib/python3.9/dist-packages/pwnagotchi/ui/view.py'
+        view_file = '/usr/local/lib/python3.7/dist-packages/pwnagotchi/ui/view.py'
         backup_file = '/files-backup/view.py'
         shutil.copy(backup_file, view_file)
 

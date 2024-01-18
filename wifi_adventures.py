@@ -34,7 +34,7 @@ def choose_random_adventure(self):
 
 class FunAchievements(plugins.Plugin):
     __author__ = 'https://github.com/MaliosDark/'
-    __version__ = '1.2.96'
+    __version__ = '1.2.97'
     __license__ = 'GPL3'
     __description__ = 'Taking Pwnagotchi on WiFi adventures and collect fun achievements.'
     __defaults__ = {
@@ -84,6 +84,9 @@ class FunAchievements(plugins.Plugin):
                 self.last_claimed = datetime.datetime.strptime(data['last_claimed'], '%Y-%m-%d').date() if 'last_claimed' in data else None
                 self.current_adventure = data.get('current_adventure', choose_random_adventure())
         logging.info(f"[FunAchievements] Loaded data from JSON: {data}")
+
+    def choose_random_adventure(self):
+        return random.choice([AdventureType.HANDSHAKE, AdventureType.NEW_NETWORK, AdventureType.PACKET_PARTY, AdventureType.PIXEL_PARADE, AdventureType.DATA_DAZZLE])
 
     def on_loaded(self):
         logging.info("[FunAchievements] plugin loaded")

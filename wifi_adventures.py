@@ -31,7 +31,7 @@ class AdventureType:
 
 class FunAchievements(plugins.Plugin):
     __author__ = 'https://github.com/MaliosDark/'
-    __version__ = '1.2.99'
+    __version__ = '1.3.0'
     __license__ = 'GPL3'
     __description__ = 'Taking Pwnagotchi on WiFi adventures and collect fun achievements.'
     __defaults__ = {
@@ -55,15 +55,15 @@ class FunAchievements(plugins.Plugin):
 
     def get_label_based_on_adventure(self):
         if self.current_adventure == AdventureType.NEW_NETWORK:
-            return "New Adventure: "
+            return "New Adventure:  "
         elif self.current_adventure == AdventureType.PACKET_PARTY:
-            return "Party Time: "
+            return "Party Time:  "
         elif self.current_adventure == AdventureType.PIXEL_PARADE:
-            return "Pixel Parade: "
+            return "Pixel Parade:  "
         elif self.current_adventure == AdventureType.DATA_DAZZLE:
-            return "Data Dazzle: "
+            return "Data Dazzle:  "
         else:
-            return "Mysterious Quest: "
+            return "Mysterious Quest:  "
 
     def load_from_json(self):
         logging.info('[FunAchievements] Loading data from JSON...')
@@ -171,9 +171,9 @@ class FunAchievements(plugins.Plugin):
         logging.info(f"[FunAchievements] on_handshake - Current Adventure: {self.current_adventure}, Handshake Count: {self.handshake_count}")
         
         difficulty_multiplier = {
-            AdventureType.HANDSHAKE: 2,
+            AdventureType.HANDSHAKE: 1,
             AdventureType.NEW_NETWORK: 1,  
-            AdventureType.PACKET_PARTY: 1,
+            AdventureType.PACKET_PARTY: 2,
             AdventureType.PIXEL_PARADE: 2,
             AdventureType.DATA_DAZZLE: 1
         }

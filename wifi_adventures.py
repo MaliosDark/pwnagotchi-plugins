@@ -34,7 +34,7 @@ def choose_random_adventure():
 
 class FunAchievements(plugins.Plugin):
     __author__ = 'https://github.com/MaliosDark/'
-    __version__ = '1.2.92'
+    __version__ = '1.2.93'
     __license__ = 'GPL3'
     __description__ = 'Taking Pwnagotchi on WiFi adventures and collect fun achievements.'
     __defaults__ = {
@@ -129,11 +129,18 @@ class FunAchievements(plugins.Plugin):
             95: "Master of the Matrix",
             100: "Legendary Adventurer"
         }
-        
+
         # Buscar el título más alto alcanzado y actualizar el atributo 'title'
         for threshold, title in titles.items():
             if self.fun_achievement_count >= threshold:
                 self.title = title
+
+        # Si el título actual es mayor al título anterior, actualiza el título
+        if titles.get(self.fun_achievement_count, "") != self.title:
+            self.title = titles.get(self.fun_achievement_count, "")
+
+        logging.info(f"[FunAchievements] Updated title: {self.title}")
+
 
     def get_title_based_on_achievements(self):
         # Llamar a update_title para asegurarse de que el atributo 'title' esté actualizado

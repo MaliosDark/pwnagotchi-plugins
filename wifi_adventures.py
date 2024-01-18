@@ -34,7 +34,7 @@ def choose_random_adventure():
 
 class FunAchievements(plugins.Plugin):
     __author__ = 'https://github.com/MaliosDark/'
-    __version__ = '1.2.9'
+    __version__ = '1.2.91'
     __license__ = 'GPL3'
     __description__ = 'Taking Pwnagotchi on WiFi adventures and collect fun achievements.'
     __defaults__ = {
@@ -140,7 +140,7 @@ class FunAchievements(plugins.Plugin):
         self.update_title()
         
         # Retornar el título actualizado
-        return self.title or "WiFi Whisperer"
+        return self.title
 
 
     def save_to_json(self):
@@ -162,7 +162,6 @@ class FunAchievements(plugins.Plugin):
     def on_handshake(self, agent, filename, access_point, client_station):
         logging.info(f"[FunAchievements] on_handshake - Current Adventure: {self.current_adventure}, Handshake Count: {self.handshake_count}")
         
-        # Incrementa el contador de handshakes según la dificultad de la aventura actual
         difficulty_multiplier = {
             AdventureType.HANDSHAKE: 2,
             AdventureType.NEW_NETWORK: 1,  
@@ -175,11 +174,9 @@ class FunAchievements(plugins.Plugin):
         self.check_and_update_daily_quest_target()
         self.check_treasure_chest()
 
-        # Llamar a update_title después de actualizar el contador de handshakes
         self.update_title()
 
         self.save_to_json()
-
 
     def on_packet_party(self, agent, party_count):
         if self.current_adventure == AdventureType.PACKET_PARTY:

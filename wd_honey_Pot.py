@@ -9,7 +9,7 @@ from pwnagotchi.plugins import Plugin
 
 class HoneyPotPlugin(Plugin):
     __author__ = 'Andryu Schittone'
-    __version__ = '1.4.41'
+    __version__ = '1.4.5'
     __license__ = 'GPL3'
     __description__ = 'A Pwnagotchi plugin for setting up a honey pot to detect other Pwnagotchis making deauths.'
 
@@ -38,9 +38,9 @@ class HoneyPotPlugin(Plugin):
     def on_ui_setup(self, ui):
         """Add UI elements with specific positions."""
         logging.info("Setting up UI")
-        ui.add_element('honey-pots', LabeledValue(label='Honey Pots', position=(2, 2)))
-        ui.add_element('detected-fake-aps', LabeledValue(label='Detected Fake APs', position=(2, 12)))
-        ui.add_element('active-fake-aps', LabeledValue(label='Active Fake APs', position=(2, 22)))
+        ui.add_element('honey-pots', LabeledValue(label='Honey Pots', position=(125, 75)))
+        ui.add_element('detected-fake-aps', LabeledValue(label='Detected Fake APs', position=(125, 85)))
+        ui.add_element('active-fake-aps', LabeledValue(label='Active Fake APs', position=(125, 95)))
 
     def on_ui_update(self, ui):
         """Update UI elements."""
@@ -196,17 +196,17 @@ def setup():
 # main.plugins.wd_honey_pot.fake_ap.rsn_cipher = "CCMP"
 # main.plugins.wd_honey_pot.ui.honey-pots.color = 'BLACK'
 # main.plugins.wd_honey_pot.ui.honey-pots.label = 'Honey Pots'
-# main.plugins.wd_honey_pot.ui.honey-pots.position = [2, 2]
+# main.plugins.wd_honey_pot.ui.honey-pots.position = [125, 75]
 # main.plugins.wd_honey_pot.ui.honey-pots.label_font = 'Bold'
 # main.plugins.wd_honey_pot.ui.honey-pots.text_font = 'Medium'
 # main.plugins.wd_honey_pot.ui.detected-fake-aps.color = 'BLACK'
 # main.plugins.wd_honey_pot.ui.detected-fake-aps.label = 'Detected Fake APs'
-# main.plugins.wd_honey_pot.ui.detected-fake-aps.position = [2, 12]
+# main.plugins.wd_honey_pot.ui.detected-fake-aps.position = [125, 85]
 # main.plugins.wd_honey_pot.ui.detected-fake-aps.label_font = 'Bold'
 # main.plugins.wd_honey_pot.ui.detected-fake-aps.text_font = 'Medium'
 # main.plugins.wd_honey_pot.ui.active-fake-aps.color = 'BLACK'
 # main.plugins.wd_honey_pot.ui.active-fake-aps.label = 'Active Fake APs'
-# main.plugins.wd_honey_pot.ui.active-fake-aps.position = [2, 22]
+# main.plugins.wd_honey_pot.ui.active-fake-aps.position = [125, 95]
 # main.plugins.wd_honey_pot.ui.active-fake-aps.label_font = 'Bold'
 # main.plugins.wd_honey_pot.ui.active-fake-aps.text_font = 'Medium'
 

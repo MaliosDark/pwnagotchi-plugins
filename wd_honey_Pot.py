@@ -9,7 +9,7 @@ from pwnagotchi.plugins import Plugin
 
 class HoneyPotPlugin(Plugin):
     __author__ = 'Andryu Schittone'
-    __version__ = '1.4.4'
+    __version__ = '1.4.41'
     __license__ = 'GPL3'
     __description__ = 'A Pwnagotchi plugin for setting up a honey pot to detect other Pwnagotchis making deauths.'
 
@@ -36,11 +36,11 @@ class HoneyPotPlugin(Plugin):
         pass
 
     def on_ui_setup(self, ui):
-        """Add UI elements."""
+        """Add UI elements with specific positions."""
         logging.info("Setting up UI")
-        ui.add_element('honey-pots', LabeledValue(label='Honey Pots'))
-        ui.add_element('detected-fake-aps', LabeledValue(label='Detected Fake APs'))
-        ui.add_element('active-fake-aps', LabeledValue(label='Active Fake APs'))
+        ui.add_element('honey-pots', LabeledValue(label='Honey Pots', position=(2, 2)))
+        ui.add_element('detected-fake-aps', LabeledValue(label='Detected Fake APs', position=(2, 12)))
+        ui.add_element('active-fake-aps', LabeledValue(label='Active Fake APs', position=(2, 22)))
 
     def on_ui_update(self, ui):
         """Update UI elements."""

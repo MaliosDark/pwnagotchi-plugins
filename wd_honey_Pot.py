@@ -9,7 +9,7 @@ from pwnagotchi.plugins import Plugin
 
 class HoneyPotPlugin(Plugin):
     __author__ = 'Andryu Schittone'
-    __version__ = '1.4.3'
+    __version__ = '1.4.4'
     __license__ = 'GPL3'
     __description__ = 'A Pwnagotchi plugin for setting up a honey pot to detect other Pwnagotchis making deauths.'
 
@@ -37,20 +37,19 @@ class HoneyPotPlugin(Plugin):
 
     def on_ui_setup(self, ui):
         """Add UI elements."""
-        ui.add_element('honey-pots', LabeledValue(color=fonts.BLACK, label='Honey Pots', value='0',
-                                                position=(2, 2), label_font=fonts.Bold, text_font=fonts.Medium))
-        ui.add_element('detected-fake-aps', LabeledValue(color=fonts.BLACK, label='Detected Fake APs',
-                                                        value='0', position=(2, 12), label_font=fonts.Bold,
-                                                        text_font=fonts.Medium))
-        ui.add_element('active-fake-aps', LabeledValue(color=fonts.BLACK, label='Active Fake APs',
-                                                    value='0', position=(2, 22), label_font=fonts.Bold,
-                                                    text_font=fonts.Medium))
+        logging.info("Setting up UI")
+        ui.add_element('honey-pots', LabeledValue(label='Honey Pots'))
+        ui.add_element('detected-fake-aps', LabeledValue(label='Detected Fake APs'))
+        ui.add_element('active-fake-aps', LabeledValue(label='Active Fake APs'))
 
     def on_ui_update(self, ui):
         """Update UI elements."""
+        logging.info("Updating UI")
         ui.set('honey-pots', str(len(self.honey_pot_aps)))
         ui.set('detected-fake-aps', str(self.detected_fake_aps))
         ui.set('active-fake-aps', str(self.active_fake_aps))
+        ui.update(force=True)
+
 
     def handle_wifi_handshake(self, agent, filename, access_point, client_station):
         """Handle wifi handshake event."""

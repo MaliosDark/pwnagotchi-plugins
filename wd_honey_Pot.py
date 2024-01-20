@@ -9,7 +9,7 @@ from pwnagotchi.plugins import Plugin
 
 class HoneyPotPlugin(Plugin):
     __author__ = 'Andryu Schittone'
-    __version__ = '1.3.7'
+    __version__ = '1.3.8'
     __license__ = 'GPL3'
     __description__ = 'A Pwnagotchi plugin for setting up a honey pot to just detect other Pwnagotchis making deauths.'
 
@@ -202,3 +202,44 @@ class HoneyPotPlugin(Plugin):
 # Register the plugin
 def setup():
     return HoneyPotPlugin()
+#
+
+
+#USE IN CONFIG.TOML
+
+# main.plugins.wd_honey_pot.update_interval = 60
+# main.plugins.wd_honey_pot.num_initial_aps = 5
+# main.plugins.wd_honey_pot.log_path = "/etc/pwnagotchi/hplogs.log"
+# main.plugins.wd_honey_pot.fake_station.vendor = "FakeVendor"
+# main.plugins.wd_honey_pot.fake_station.key_mgmt = "WPA2-PSK"
+# main.plugins.wd_honey_pot.fake_station.wpa_cipher = "CCMP"
+# main.plugins.wd_honey_pot.fake_station.manuf = "FakeManufacturer"
+# main.plugins.wd_honey_pot.fake_station.rsn_cipher = "CCMP"
+# main.plugins.wd_honey_pot.fake_ap.wpa = "2"
+# main.plugins.wd_honey_pot.fake_ap.rsn_pairwise = "CCMP"
+# main.plugins.wd_honey_pot.fake_ap.wpa_cipher = "CCMP"
+# main.plugins.wd_honey_pot.fake_ap.rsn_cipher = "CCMP"
+# main.plugins.wd_honey_pot.ui.honey-pots.color = 'BLACK'
+# main.plugins.wd_honey_pot.ui.honey-pots.label = 'Honey Pots'
+# main.plugins.wd_honey_pot.ui.honey-pots.position = [2, 2]
+# main.plugins.wd_honey_pot.ui.honey-pots.label_font = 'Bold'
+# main.plugins.wd_honey_pot.ui.honey-pots.text_font = 'Medium'
+# main.plugins.wd_honey_pot.ui.detected-fake-aps.color = 'BLACK'
+# main.plugins.wd_honey_pot.ui.detected-fake-aps.label = 'Detected Fake APs'
+# main.plugins.wd_honey_pot.ui.detected-fake-aps.position = [2, 12]
+# main.plugins.wd_honey_pot.ui.detected-fake-aps.label_font = 'Bold'
+# main.plugins.wd_honey_pot.ui.detected-fake-aps.text_font = 'Medium'
+# main.plugins.wd_honey_pot.ui.active-fake-aps.color = 'BLACK'
+# main.plugins.wd_honey_pot.ui.active-fake-aps.label = 'Active Fake APs'
+# main.plugins.wd_honey_pot.ui.active-fake-aps.position = [2, 22]
+# main.plugins.wd_honey_pot.ui.active-fake-aps.label_font = 'Bold'
+# main.plugins.wd_honey_pot.ui.active-fake-aps.text_font = 'Medium'
+# main.plugins.wd_honey_pot.ui.3d-visualization.color = 'BLACK'
+# main.plugins.wd_honey_pot.ui.3d-visualization.label = ''
+# main.plugins.wd_honey_pot.ui.3d-visualization.position = [2, 32]
+# main.plugins.wd_honey_pot.ui.3d-visualization.label_font = 'Bold'
+# main.plugins.wd_honey_pot.ui.3d-visualization.text_font = 'Small'
+
+
+
+

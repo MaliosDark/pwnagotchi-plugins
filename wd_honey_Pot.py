@@ -9,7 +9,7 @@ from pwnagotchi.plugins import Plugin
 
 class HoneyPotPlugin(Plugin):
     __author__ = 'Andryu Schittone'
-    __version__ = '1.4.0'
+    __version__ = '1.4.1'
     __license__ = 'GPL3'
     __description__ = 'A Pwnagotchi plugin for setting up a honey pot to just detect other Pwnagotchis making deauths.'
 
@@ -112,20 +112,16 @@ class HoneyPotPlugin(Plugin):
         self.ui.set('detected-fake-aps', str(self.detected_fake_aps))
         self.ui.set('active-fake-aps', str(self.active_fake_aps))
 
-
         # Added 3D representation
         three_d_visualization = f"\n3D Visualization\n{'=' * 15}\n"
         for ap in self.honey_pot_aps:
-            three_d_visualization += f"AP: {ap['essid']} ({ap['addr']}) {'*' * 5}\n"
+            three_d_visualization += f"AP: {ap} {'*' * 5}\n"  # Cambié ap['essid'] a ap
         three_d_visualization += '=' * 15
-        self.ui.add_element('3d-visualization', LabeledValue(color=fonts.BLACK, label='',
-                                                             value=three_d_visualization,
-                                                             position=(self.ui.width() / 2 - 25, 30),
-                                                             label_font=fonts.Bold, text_font=fonts.Small))
+        self.ui.set('3d-visualization', three_d_visualization)
 
         with open(self.log_path, 'a') as log_file:
             log_file.write(f"{time.strftime('%Y-%m-%d %H:%M:%S')} - Detected Fake APs: {self.detected_fake_aps}, "
-                           f"Active Fake APs: {self.active_fake_aps}\n")
+                        f"Active Fake APs: {self.active_fake_aps}\n")
 
         self.detected_fake_aps = 0
         self.active_fake_aps = 0

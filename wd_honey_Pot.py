@@ -9,7 +9,7 @@ from pwnagotchi.plugins import Plugin
 
 class HoneyPotPlugin(Plugin):
     __author__ = 'Andryu Schittone'
-    __version__ = '1.3.9'
+    __version__ = '1.4.0'
     __license__ = 'GPL3'
     __description__ = 'A Pwnagotchi plugin for setting up a honey pot to just detect other Pwnagotchis making deauths.'
 
@@ -41,6 +41,16 @@ class HoneyPotPlugin(Plugin):
         ui.add_element('status', LabeledValue(color=fonts.BLACK, label='Status', value='',
                                             position=(ui.width() / 2 - 25, 30),
                                             label_font=fonts.Bold, text_font=fonts.Small))
+        ui.add_element('honey-pots', LabeledValue(color=fonts.BLACK, label='Honey Pots', value='0',
+                                                position=(ui.width() / 2 - 25, 0),
+                                                label_font=fonts.Bold, text_font=fonts.Medium))
+        ui.add_element('detected-fake-aps', LabeledValue(color=fonts.BLACK, label='Detected Fake APs',
+                                                        value='0', position=(ui.width() / 2 - 25, 10),
+                                                        label_font=fonts.Bold, text_font=fonts.Medium))
+        ui.add_element('active-fake-aps', LabeledValue(color=fonts.BLACK, label='Active Fake APs',
+                                                    value='0', position=(ui.width() / 2 - 25, 20),
+                                                    label_font=fonts.Bold, text_font=fonts.Medium))
+
 
     def on_ui_update(self, ui):
         """Update UI elements."""
@@ -98,19 +108,10 @@ class HoneyPotPlugin(Plugin):
 
     def render_honey_pots(self):
         """Render honey pots on UI."""
-        self.ui.add_element('honey-pots', LabeledValue(color=fonts.BLACK, label='Honey Pots',
-                                                        value=str(len(self.honey_pot_aps)),
-                                                        position=(self.ui.width() / 2 - 25, 0),
-                                                        label_font=fonts.Bold, text_font=fonts.Medium))
-        self.ui.add_element('detected-fake-aps', LabeledValue(color=fonts.BLACK,
-                                                               label='Detected Fake APs',
-                                                               value=str(self.detected_fake_aps),
-                                                               position=(self.ui.width() / 2 - 25, 10),
-                                                               label_font=fonts.Bold, text_font=fonts.Medium))
-        self.ui.add_element('active-fake-aps', LabeledValue(color=fonts.BLACK, label='Active Fake APs',
-                                                             value=str(self.active_fake_aps),
-                                                             position=(self.ui.width() / 2 - 25, 20),
-                                                             label_font=fonts.Bold, text_font=fonts.Medium))
+        self.ui.set('honey-pots', str(len(self.honey_pot_aps)))
+        self.ui.set('detected-fake-aps', str(self.detected_fake_aps))
+        self.ui.set('active-fake-aps', str(self.active_fake_aps))
+
 
         # Added 3D representation
         three_d_visualization = f"\n3D Visualization\n{'=' * 15}\n"

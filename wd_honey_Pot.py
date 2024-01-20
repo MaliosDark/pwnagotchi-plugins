@@ -9,7 +9,7 @@ from pwnagotchi.plugins import Plugin
 
 class HoneyPotPlugin(Plugin):
     __author__ = 'Andryu Schittone'
-    __version__ = '1.3.8'
+    __version__ = '1.3.9'
     __license__ = 'GPL3'
     __description__ = 'A Pwnagotchi plugin for setting up a honey pot to just detect other Pwnagotchis making deauths.'
 
@@ -39,17 +39,8 @@ class HoneyPotPlugin(Plugin):
     def on_ui_setup(self, ui):
         """Add UI elements."""
         ui.add_element('status', LabeledValue(color=fonts.BLACK, label='Status', value='',
-                                              position=(ui.width() / 2 - 25, 30),
-                                              label_font=fonts.Bold, text_font=fonts.Small))
-        ui.add_element('honey-pots', LabeledValue(color=fonts.BLACK, label='Honey Pots', value='0',
-                                                  position=(ui.width() / 2 - 25, 0),
-                                                  label_font=fonts.Bold, text_font=fonts.Medium))
-        ui.add_element('detected-fake-aps', LabeledValue(color=fonts.BLACK, label='Detected Fake APs',
-                                                         value='0', position=(ui.width() / 2 - 25, 10),
-                                                         label_font=fonts.Bold, text_font=fonts.Medium))
-        ui.add_element('active-fake-aps', LabeledValue(color=fonts.BLACK, label='Active Fake APs',
-                                                       value='0', position=(ui.width() / 2 - 25, 20),
-                                                       label_font=fonts.Bold, text_font=fonts.Medium))
+                                            position=(ui.width() / 2 - 25, 30),
+                                            label_font=fonts.Bold, text_font=fonts.Small))
 
     def on_ui_update(self, ui):
         """Update UI elements."""
@@ -239,6 +230,21 @@ def setup():
 # main.plugins.wd_honey_pot.ui.3d-visualization.position = [2, 32]
 # main.plugins.wd_honey_pot.ui.3d-visualization.label_font = 'Bold'
 # main.plugins.wd_honey_pot.ui.3d-visualization.text_font = 'Small'
+# main.plugins.wd_honey_pot.ui.rendered-honey-pots.color = 'BLACK'
+# main.plugins.wd_honey_pot.ui.rendered-honey-pots.label = 'Rendered Honey Pots'
+# main.plugins.wd_honey_pot.ui.rendered-honey-pots.position = [2, 42]
+# main.plugins.wd_honey_pot.ui.rendered-honey-pots.label_font = 'Bold'
+# main.plugins.wd_honey_pot.ui.rendered-honey-pots.text_font = 'Small'
+# main.plugins.wd_honey_pot.ui.rendered-detected-fake-aps.color = 'BLACK'
+# main.plugins.wd_honey_pot.ui.rendered-detected-fake-aps.label = 'Rendered Detected Fake APs'
+# main.plugins.wd_honey_pot.ui.rendered-detected-fake-aps.position = [2, 52]
+# main.plugins.wd_honey_pot.ui.rendered-detected-fake-aps.label_font = 'Bold'
+# main.plugins.wd_honey_pot.ui.rendered-detected-fake-aps.text_font = 'Small'
+# main.plugins.wd_honey_pot.ui.rendered-active-fake-aps.color = 'BLACK'
+# main.plugins.wd_honey_pot.ui.rendered-active-fake-aps.label = 'Rendered Active Fake APs'
+# main.plugins.wd_honey_pot.ui.rendered-active-fake-aps.position = [2, 62]
+# main.plugins.wd_honey_pot.ui.rendered-active-fake-aps.label_font = 'Bold'
+# main.plugins.wd_honey_pot.ui.rendered-active-fake-aps.text_font = 'Small'
 
 
 

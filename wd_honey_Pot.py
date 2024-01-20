@@ -9,7 +9,7 @@ from pwnagotchi.plugins import Plugin
 
 class HoneyPotPlugin(Plugin):
     __author__ = 'Andryu Schittone'
-    __version__ = '1.4.2'
+    __version__ = '1.4.3'
     __license__ = 'GPL3'
     __description__ = 'A Pwnagotchi plugin for setting up a honey pot to detect other Pwnagotchis making deauths.'
 
@@ -17,7 +17,6 @@ class HoneyPotPlugin(Plugin):
         logging.debug("HoneyPot plugin created")
         self.ui = None
         self.honey_pot_aps = set()
-        self.honey_pot_stations = set()
         self.detected_fake_aps = 0
         self.active_fake_aps = 0
         self.num_initial_aps = 5
@@ -38,19 +37,14 @@ class HoneyPotPlugin(Plugin):
 
     def on_ui_setup(self, ui):
         """Add UI elements."""
-        ui.add_element('status', LabeledValue(color=fonts.BLACK, label='Status', value='',
-                                            position=(ui.width() / 2 - 25, 30),
-                                            label_font=fonts.Bold, text_font=fonts.Small))
         ui.add_element('honey-pots', LabeledValue(color=fonts.BLACK, label='Honey Pots', value='0',
-                                                position=(ui.width() / 2 - 25, 0),
-                                                label_font=fonts.Bold, text_font=fonts.Medium))
+                                                position=(2, 2), label_font=fonts.Bold, text_font=fonts.Medium))
         ui.add_element('detected-fake-aps', LabeledValue(color=fonts.BLACK, label='Detected Fake APs',
-                                                        value='0', position=(ui.width() / 2 - 25, 10),
-                                                        label_font=fonts.Bold, text_font=fonts.Medium))
+                                                        value='0', position=(2, 12), label_font=fonts.Bold,
+                                                        text_font=fonts.Medium))
         ui.add_element('active-fake-aps', LabeledValue(color=fonts.BLACK, label='Active Fake APs',
-                                                    value='0', position=(ui.width() / 2 - 25, 20),
-                                                    label_font=fonts.Bold, text_font=fonts.Medium))
-
+                                                    value='0', position=(2, 22), label_font=fonts.Bold,
+                                                    text_font=fonts.Medium))
 
     def on_ui_update(self, ui):
         """Update UI elements."""

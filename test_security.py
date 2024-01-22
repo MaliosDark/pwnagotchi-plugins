@@ -36,7 +36,7 @@ class SecurityMonitor(plugins.Plugin):
         
         # Add a new UI element to display security warnings
         ui.add_element('security_warnings', LabeledValue(color=BLACK, label='Security Warnings ',
-                                                        value='', position=(ui.width() / 2 - 25, 2),
+                                                        value='...', position=(ui.width() / 2 - 25, 2),
                                                         label_font=fonts.Bold, text_font=fonts.Small))
         self.ui = ui
 
@@ -136,7 +136,7 @@ class SecurityMonitor(plugins.Plugin):
         logging.info("Pwnagotchi is bored. Initiating network scan.")
         scan_result = self.scan_network()
         logging.info(f"Scan Result: {scan_result}")
-        self.ui.set('discovered_devices', scan_result)
+        self.ui.set('security_warnings', scan_result)
 
         # You can implement further actions, such as alerting or analyzing the scan result
         self.analyze_network_scan(scan_result)

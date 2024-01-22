@@ -17,7 +17,7 @@ import scapy
 
 class SecurityMonitor(plugins.Plugin):
     __author__ = 'MaliosDark'
-    __version__ = '1.0.2'
+    __version__ = '1.0.3'
     __license__ = 'GPL3'
     __description__ = 'LAN Security Monitor Plugin for Pwnagotchi'
 
@@ -26,6 +26,7 @@ class SecurityMonitor(plugins.Plugin):
 
     def on_loaded(self):
         logging.info("Security Monitor plugin loaded")
+        self.on_ui_setup(self.ui)
 
     def on_ui_setup(self, ui):
         # Add custom UI elements for security status
@@ -37,6 +38,7 @@ class SecurityMonitor(plugins.Plugin):
         ui.add_element('security_warnings', LabeledValue(color=BLACK, label='Security Warnings ',
                                                         value='', position=(ui.width() / 2 - 25, 2),
                                                         label_font=fonts.Bold, text_font=fonts.Small))
+        self.ui = ui
 
 
 
@@ -44,6 +46,7 @@ class SecurityMonitor(plugins.Plugin):
         # Analyze WiFi updates and check for security issues
         security_status, security_warnings = self.check_security(access_points)
         agent.set('security_status', security_status)
+        logging.info("on_wifi_update called")
 
         # Update the UI element with security warnings
         self.ui.set('security_warnings', ', '.join(security_warnings))
@@ -171,7 +174,7 @@ class SecurityMonitor(plugins.Plugin):
 
         # Example: Check for specific patterns or anomalies in the captured packets
         if 'malicious_pattern' in deep_packet_result:
-            logging.info("Malicious pattern detected in the network traffic.")
+            logging.warning("Malicious pattern detected in the network traffic.")
             # You can perform additional actions, such as alerting or blocking
 
         # Example: Extract information from the captured packets
@@ -266,6 +269,9 @@ class SecurityMonitor(plugins.Plugin):
             return None
         except netifaces.netifacesError as e:
             logging.error(f"netifacesError: {e}. Unable to determine the local IP address.")
+            return None
+        except Exception as e:
+            logging.error(f"Error obtaining local IP: {e}")
             return None
 
     def deep_packet_inspection(self):

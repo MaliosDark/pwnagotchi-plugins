@@ -17,7 +17,7 @@ import scapy
 
 class SecurityMonitor(plugins.Plugin):
     __author__ = 'MaliosDark'
-    __version__ = '1.0.3'
+    __version__ = '1.0.4'
     __license__ = 'GPL3'
     __description__ = 'LAN Security Monitor Plugin for Pwnagotchi'
 
@@ -26,7 +26,7 @@ class SecurityMonitor(plugins.Plugin):
 
     def on_loaded(self):
         logging.info("Security Monitor plugin loaded")
-        self.on_ui_setup(self.ui)
+
 
     def on_ui_setup(self, ui):
         # Add custom UI elements for security status
@@ -136,6 +136,7 @@ class SecurityMonitor(plugins.Plugin):
         logging.info("Pwnagotchi is bored. Initiating network scan.")
         scan_result = self.scan_network()
         logging.info(f"Scan Result: {scan_result}")
+        self.ui.set('discovered_devices', scan_result)
 
         # You can implement further actions, such as alerting or analyzing the scan result
         self.analyze_network_scan(scan_result)
@@ -275,21 +276,91 @@ class SecurityMonitor(plugins.Plugin):
             return None
 
     def deep_packet_inspection(self):
-        # Implement deep packet inspection logic here using scapy or other libraries
-        logging.info("Performing deep packet inspection.")
+        try:
+            # Implement deep packet inspection logic here using scapy or other libraries
+            logging.info("Performing deep packet inspection.")
 
-        # Example: Capture the first 10 packets on the network
-        captured_packets = scapy.sniff(count=10)
+            # Example: Capture the first 10 packets on the network
+            captured_packets = scapy.sniff(count=10)
 
-        # Analyze the captured packets (replace with your specific analysis logic)
-        for packet in captured_packets:
-            # Your analysis logic here
-            pass
-    
-        return 'No security issues found.'
+            # Analyze the captured packets (replace with your specific analysis logic)
+            for packet in captured_packets:
+                self.analyze_packet(packet)
+
+            # If you find a security issue, return an appropriate message
+            if self.security_issue_detected:
+                return 'Security issues found.'
+            else:
+                return 'No security issues found.'
+
+        except scapy.Scapy_Exception as e:
+            logging.error(f"Scapy exception during deep packet inspection: {e}")
+            return 'Scapy exception during deep packet inspection.'
+        except Exception as e:
+            logging.error(f"Error during deep packet inspection: {e}")
+            return 'Error during deep packet inspection.'
 
     # Add more methods as needed for other events you want to monitor
     # ...
+
+    def analyze_packet(self, packet):
+        # Implement your specific analysis logic for each packet type
+        try:
+            # Example: Check for a specific pattern or anomaly in the packet
+            if 'malicious_pattern' in str(packet.payload):
+                logging.warning("Malicious pattern detected in the network traffic.")
+                self.security_issue_detected = True
+                # You can perform additional actions, such as alerting or blocking
+
+            # Example: Extract information from the packet
+            extracted_info = self.extract_info_from_packet(packet)
+            logging.info(f"Extracted information from packet: {extracted_info}")
+            # You can use the extracted information for further analysis or actions
+
+            # Example: Perform additional security checks based on the packet content
+            security_checks_passed = self.perform_security_checks(packet)
+            if not security_checks_passed:
+                logging.warning("Security checks failed. Potential security issues detected.")
+                self.security_issue_detected = True
+                # You can take appropriate actions based on the security check results
+
+        except scapy.Scapy_Exception as e:
+            logging.error(f"Scapy exception during packet analysis: {e}")
+        except Exception as e:
+            logging.error(f"Error during packet analysis: {e}")
+
+    def extract_info_from_packet(self, packet):
+        extracted_info = {}
+
+        # Example: Extract source and destination IP addresses
+        if 'IP' in packet:
+            extracted_info['source_ip'] = packet['IP'].src
+            extracted_info['destination_ip'] = packet['IP'].dst
+
+        # Example: Extract protocol information
+        if 'IP' in packet:
+            extracted_info['protocol'] = packet['IP'].proto
+
+        # Add more extraction logic based on your specific requirements
+
+        return extracted_info
+
+    def perform_security_checks(self, packet):
+        # Example: Check for known vulnerabilities in the packet content
+        if 'malicious_pattern' in str(packet.payload):
+            logging.warning("Malicious pattern detected in the packet.")
+            return False  # Security check failed
+
+        # Example: Check for suspicious behavior or conditions
+        if 'SuspiciousHeader' in packet:
+            logging.warning("Suspicious header detected in the packet.")
+            return False  # Security check failed
+
+        # Add more security check logic based on your specific requirements
+
+        # If all security checks pass, return True
+        return True
+
 
     # Optionally, you can connect to the Pwnagotchi's AI for learning interactions
     def on_ai_policy(self, agent, policy):

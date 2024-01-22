@@ -1,6 +1,6 @@
 #THIS PLUGIN IS ON DEVELOPMENT
 #pip3 install netifaces
-#pip install scapy
+#pip3 install scapy
 
 
 
@@ -17,7 +17,7 @@ import scapy
 
 class SecurityMonitor(plugins.Plugin):
     __author__ = 'MaliosDark'
-    __version__ = '1.0.1'
+    __version__ = '1.0.2'
     __license__ = 'GPL3'
     __description__ = 'LAN Security Monitor Plugin for Pwnagotchi'
 
@@ -30,23 +30,27 @@ class SecurityMonitor(plugins.Plugin):
     def on_ui_setup(self, ui):
         # Add custom UI elements for security status
         ui.add_element('security_status', LabeledValue(color=BLACK, label='Security ', value=' Safe', 
-                                                    position=(ui.width() / 2 - 25, 0),
-                                                    label_font=fonts.Bold, text_font=fonts.Medium))
+                                                        position=(ui.width() / 2 - 25, 0),
+                                                        label_font=fonts.Bold, text_font=fonts.Medium))
         
-        # Add a new UI element to display the list of devices discovered during network scan
-        ui.add_element('discovered_devices', LabeledValue(color=BLACK, label='Discovered Devices ',
+        # Add a new UI element to display security warnings
+        ui.add_element('security_warnings', LabeledValue(color=BLACK, label='Security Warnings ',
                                                         value='', position=(ui.width() / 2 - 25, 2),
                                                         label_font=fonts.Bold, text_font=fonts.Small))
 
 
+
     def on_wifi_update(self, agent, access_points):
         # Analyze WiFi updates and check for security issues
-        security_status = self.check_security(access_points)
+        security_status, security_warnings = self.check_security(access_points)
         agent.set('security_status', security_status)
+
+        # Update the UI element with security warnings
+        self.ui.set('security_warnings', ', '.join(security_warnings))
 
     def check_security(self, access_points):
         # Initialize a list to store security issues
-        security_issues = []
+        security_warnings = []
 
         # Iterate through each access point
         for ap in access_points:
@@ -55,31 +59,32 @@ class SecurityMonitor(plugins.Plugin):
             # Check for common security issues
             encryption = ap.get('encryption', '')
             if 'WEP' in encryption:
-                security_issues.append(f"Detected WEP network - {essid}")
+                security_warnings.append(f"Detected WEP network - {essid}")
 
             if 'WPA' in encryption:
                 # You can add more specific checks for WPA configurations, e.g., WPA1, WPA2, WPA3
-                security_issues.append(f"Detected WPA network - {essid}")
+                security_warnings.append(f"Detected WPA network - {essid}")
 
             # Check for weak passwords (you may need to customize this based on your criteria)
             if ap.get('password') in ['admin', 'password', '123456']:
-                security_issues.append(f"Weak password for network - {essid}")
+                security_warnings.append(f"Weak password for network - {essid}")
 
             # Check for open networks
             if 'OPN' in encryption:
-                security_issues.append(f"Detected open network - {essid}")
+                security_warnings.append(f"Detected open network - {essid}")
 
             # Add more checks as needed for your specific security criteria
 
-        if security_issues:
+        if security_warnings:
             # If there are security issues, log and return 'Warning'
-            for issue in security_issues:
-                logging.warning(f"Security Warning: {issue}")
-            return 'Warning'
+            for warning in security_warnings:
+                logging.info(f"Security Warning: {warning}")
+            return 'Warning', security_warnings
         else:
             # If no security issues are found, log and return 'Safe'
             logging.info("No security issues detected.")
-            return 'Safe'
+            return 'Safe', []
+
 
 
     def on_handshake(self, agent, filename, access_point, client_station):
@@ -94,7 +99,7 @@ class SecurityMonitor(plugins.Plugin):
 
     def on_deauthentication(self, agent, access_point, client_station):
         # Called when the agent is deauthenticating a client station from an AP
-        logging.warning(f"Deauthentication detected from {client_station} to {access_point}")
+        logging.info(f"Deauthentication detected from {client_station} to {access_point}")
 
         # You can implement further actions, such as alerting or blocking the client station
         self.block_client_station(client_station)
@@ -166,7 +171,7 @@ class SecurityMonitor(plugins.Plugin):
 
         # Example: Check for specific patterns or anomalies in the captured packets
         if 'malicious_pattern' in deep_packet_result:
-            logging.warning("Malicious pattern detected in the network traffic.")
+            logging.info("Malicious pattern detected in the network traffic.")
             # You can perform additional actions, such as alerting or blocking
 
         # Example: Extract information from the captured packets

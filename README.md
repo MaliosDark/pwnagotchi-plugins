@@ -1,8 +1,8 @@
-# educational-purposes-exclusively.py
 
-## Educational Purposes Exclusively Plugin [GitHub Repository](https://github.com/c-nagy/pwnagotchi-educational-purposes-only-plugin)
-
+## Educational-purposes-exclusively
 This plugin is designed for educational purposes, enabling automatic authentication to known networks and performing internal network reconnaissance. Please be aware of the following considerations before using this experimental plugin.
+
+ **Inspired on the Educational Purposes Only Plugin [GitHub Repository](https://github.com/c-nagy/pwnagotchi-educational-purposes-only-plugin)**
 
 ### Dangers of Using This Plugin
 
@@ -20,6 +20,8 @@ This plugin is designed for educational purposes, enabling automatic authenticat
 1. Ensure you are in a controlled educational environment.
 2. Use the plugin responsibly and avoid deploying it in production scenarios.
 3. Keep an eye on the plugin's status indicators for any unexpected behavior.
+
+   
 
 ### Installation of Other Plugins
 

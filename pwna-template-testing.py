@@ -23,8 +23,8 @@ import pwnagotchi.plugins as plugins
 class EgirlThemePlugin(plugins.Plugin):
     # Rutas de archivos
     CONFIG_FILE = '/etc/pwnagotchi/config.toml'
-    COMPONENTS_FILE = '/usr/local/lib/python3.9/dist-packages/pwnagotchi/ui/components.py'
-    VIEW_FILE = '/usr/local/lib/python3.9/dist-packages/pwnagotchi/ui/view.py'
+    COMPONENTS_FILE = '/usr/local/lib/python3.7/dist-packages/pwnagotchi/ui/components.py'
+    VIEW_FILE = '/usr/local/lib/python3.7/dist-packages/pwnagotchi/ui/view.py'
     BACKUP_COMPONENTS_FILE = '/files-backup/components.py'
     BACKUP_VIEW_FILE = '/files-backup/view.py'
     CUSTOM_FACES_DIRECTORY = '/custom-faces/egirl-pwnagotchi'

@@ -22,7 +22,7 @@ app = Flask(__name__)
 class SecurityMonitor(plugins.Plugin):
     __GitHub__ = "https://github.com/MaliosDark/pwnagotchi-plugins"
     __author__ = "MaliosDark, (itsdarklikehell bauke.molenaar@gmail.com)"
-    __version__ = "1.0.8"
+    __version__ = "1.0.8.1"
     __license__ = "GPL3"
     __description__ = "LAN Security Monitor Plugin for Pwnagotchi"
     __name__ = "SecurityMonitor"
@@ -420,7 +420,7 @@ class SecurityMonitor(plugins.Plugin):
         </html>
         """
         # Retornar el HTML como respuesta
-        return html_content
+        return make_response(html_content)
 
     def on_webhook(self, path, request):
         logging.info(f"[{self.__class__.__name__}] webhook pressed")

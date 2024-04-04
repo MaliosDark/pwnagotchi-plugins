@@ -22,7 +22,7 @@ app = Flask(__name__)
 class SecurityMonitor(plugins.Plugin):
     __GitHub__ = "https://github.com/MaliosDark/pwnagotchi-plugins"
     __author__ = "MaliosDark, (itsdarklikehell bauke.molenaar@gmail.com)"
-    __version__ = "1.0.6b"
+    __version__ = "1.0.6.1b"
     __license__ = "GPL3"
     __description__ = "LAN Security Monitor Plugin for Pwnagotchi"
     __name__ = "SecurityMonitor"
@@ -40,6 +40,10 @@ class SecurityMonitor(plugins.Plugin):
 
     def on_loaded(self):
         logging.info(f"[{self.__class__.__name__}] plugin loaded")
+
+    def on_webhook(self, path, request):
+        logging.info(f"[{self.__class__.__name__}] Webhook pressed at path {path}")
+        # Aquí puedes colocar la lógica que deseas ejecutar cuando se activa el webhook
 
     def on_ui_setup(self, ui):
         # Add custom UI elements for security status
@@ -406,7 +410,7 @@ class SecurityMonitor(plugins.Plugin):
 
     # Crea una ruta para acceder a tu plugin
     @app.route('/plugins/test_security', methods=['GET'])
-    def test_security():
+    def test_security(self):
         # Aquí puedes llamar a las funciones de tu plugin y obtener los datos que deseas mostrar
         data = {
             'security_status': 'Safe',
@@ -417,5 +421,7 @@ class SecurityMonitor(plugins.Plugin):
 
     def on_webhook(self, path, request):
         logging.info(f"[{self.__class__.__name__}] webhook pressed")
+
+
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,9 +1,11 @@
 # THIS PLUGIN IS ON DEVELOPMENT
 # pip3 install netifaces
 # pip3 install scapy
+# pip3 install flask?
 
 
 import logging
+from urllib import request
 
 import pwnagotchi.plugins as plugins
 from pwnagotchi.ui.components import LabeledValue
@@ -11,12 +13,16 @@ from pwnagotchi.ui.view import BLACK
 import pwnagotchi.ui.fonts as fonts
 import netifaces
 import scapy
+from flask import jsonify
+
+app = Flask(__name__)
+
 
 
 class SecurityMonitor(plugins.Plugin):
-    __GitHub__ = ""
-    __author__ = "(edited by: itsdarklikehell bauke.molenaar@gmail.com), MaliosDark"
-    __version__ = "1.0.5"
+    __GitHub__ = "https://github.com/MaliosDark/pwnagotchi-plugins"
+    __author__ = "MaliosDark, (itsdarklikehell bauke.molenaar@gmail.com)"
+    __version__ = "1.0.6b"
     __license__ = "GPL3"
     __description__ = "LAN Security Monitor Plugin for Pwnagotchi"
     __name__ = "SecurityMonitor"
@@ -398,5 +404,18 @@ class SecurityMonitor(plugins.Plugin):
         logging.info(f"AI Policy: {policy}")
         # You can implement further actions, such as adjusting security thresholds based on AI insights
 
+    # Crea una ruta para acceder a tu plugin
+    @app.route('/plugins/test_security', methods=['GET'])
+    def test_security():
+        # Aquí puedes llamar a las funciones de tu plugin y obtener los datos que deseas mostrar
+        data = {
+            'security_status': 'Safe',
+            'security_warnings': [],
+            # Aquí puedes incluir más datos que deseas mostrar en la ruta
+        }
+        return jsonify(data)
+
     def on_webhook(self, path, request):
         logging.info(f"[{self.__class__.__name__}] webhook pressed")
+if __name__ == '__main__':
+    app.run(debug=True)

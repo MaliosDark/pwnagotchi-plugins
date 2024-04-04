@@ -22,7 +22,7 @@ app = Flask(__name__)
 class SecurityMonitor(plugins.Plugin):
     __GitHub__ = "https://github.com/MaliosDark/pwnagotchi-plugins"
     __author__ = "MaliosDark, (itsdarklikehell bauke.molenaar@gmail.com)"
-    __version__ = "1.0.8.1"
+    __version__ = "1.0.8.2"
     __license__ = "GPL3"
     __description__ = "LAN Security Monitor Plugin for Pwnagotchi"
     __name__ = "SecurityMonitor"
@@ -61,7 +61,7 @@ class SecurityMonitor(plugins.Plugin):
             LabeledValue(
                 color=BLACK,
                 label="Security Warnings ",
-                value="...",
+                value= security_warnings,
                 position=(ui.width() / 2 - 25, 2),
                 label_font=fonts.Bold,
                 text_font=fonts.Small,

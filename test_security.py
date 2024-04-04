@@ -22,7 +22,7 @@ app = Flask(__name__)
 class SecurityMonitor(plugins.Plugin):
     __GitHub__ = "https://github.com/MaliosDark/pwnagotchi-plugins"
     __author__ = "MaliosDark, (itsdarklikehell bauke.molenaar@gmail.com)"
-    __version__ = "1.0.6.2b"
+    __version__ = "1.0.7"
     __license__ = "GPL3"
     __description__ = "LAN Security Monitor Plugin for Pwnagotchi"
     __name__ = "SecurityMonitor"

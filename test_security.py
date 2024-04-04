@@ -13,7 +13,7 @@ from pwnagotchi.ui.view import BLACK
 import pwnagotchi.ui.fonts as fonts
 import netifaces
 import scapy
-from flask import jsonify
+from flask import Flask, jsonify
 
 app = Flask(__name__)
 

@@ -8,9 +8,9 @@ import pyaudio
 
 class VoicePlugin(plugins.Plugin):
     __author__ = 'malios666@gmail.com'
-    __version__ = '1.0.1'
+    __version__ = '1.0.2'
     __license__ = 'GPL3'
-    __description__ = 'A voice interface plugin for Pwnagotchi using USB audio cards, giving voice to it.'
+    __description__ = 'A voice interface plugin for Pwnagotchi, giving voice to it.'
 
     def __init__(self):
         logging.debug("Voice plugin created")
@@ -52,6 +52,7 @@ class VoicePlugin(plugins.Plugin):
         ui.set('ups', "%4.2fV/%2i%%" % (some_voltage, some_capacity))
 
     def on_voice_command(self, command):
+        logging.info("Received voice command: %s", command)  # Agregamos este registro para verificar los comandos de voz recibidos
         if command == "hello":
             self.speak("Hello! How can I assist you?")
         elif command == "status":

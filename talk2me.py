@@ -3,25 +3,28 @@ import pwnagotchi.plugins as plugins
 import pwnagotchi.ui.fonts as fonts
 from pwnagotchi.ui.components import LabeledValue
 from pwnagotchi.ui.view import BLACK
+import pyttsx3
+import pyaudio
 
 class VoicePlugin(plugins.Plugin):
     __author__ = 'malios666@gmail.com'
-    __version__ = '1.0.0'
+    __version__ = '1.0.1'
     __license__ = 'GPL3'
-    __description__ = 'A voice interface plugin for Pwnagotchi, giving voice to it.'
+    __description__ = 'A voice interface plugin for Pwnagotchi using USB audio cards, giving voice to it.'
 
     def __init__(self):
         logging.debug("Voice plugin created")
         self.recognizer = None
         self.speech_engine = None
+        self.audio = None
 
     def install_dependencies(self):
         try:
             import speech_recognition as sr
-            import pyttsx3
+            import pyaudio
         except ImportError:
             import subprocess
-            subprocess.call(["pip", "install", "speechrecognition", "pyttsx3"])
+            subprocess.call(["pip", "install", "speechrecognition", "pyaudio"])
 
     def on_loaded(self):
         logging.warning("WARNING: this plugin should be disabled!")
@@ -29,9 +32,13 @@ class VoicePlugin(plugins.Plugin):
 
         try:
             import speech_recognition as sr
-            import pyttsx3
             self.recognizer = sr.Recognizer()
+
             self.speech_engine = pyttsx3.init()
+
+            # Configurar PyAudio para utilizar la tarjeta de sonido USB externa
+            self.audio = pyaudio.PyAudio()
+            self.speech_engine.setProperty('pyttsx3.audioDevice', 'plughw:2,0')  # Utiliza el índice 2 para la tarjeta USB
         except ImportError:
             logging.error("Failed to import required modules.")
 
